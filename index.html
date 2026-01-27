@@ -29,7 +29,23 @@
     <link rel="shortcut icon" href="images/favicon.png" type="image/x-icon" />
     <link rel="icon" href="images/favicon.png" type="image/x-icon" />
 
+    <style>
+      @keyframes blink {
+        0%,
+        50%,
+        100% {
+          opacity: 1;
+        }
+        25%,
+        75% {
+          opacity: 0;
+        }
+      }
 
+      .blinking {
+        animation: blink 1s infinite;
+      }
+    </style>
   </head>
   <body>
     <div class="page-wrapper" id="root"></div>

@@ -11,12 +11,32 @@ export default function AdminLayout() {
   const logout = useLogout();
 
   const menuItems = [
-    { path: "/admin/dashboard", label: "Dashboard", icon: "fas fa-tachometer-alt" },
+    {
+      path: "/admin/dashboard",
+      label: "Dashboard",
+      icon: "fas fa-tachometer-alt",
+    },
     { path: "/admin/dashboard/users", label: "Users", icon: "fas fa-users" },
-    { path: "/admin/dashboard/packages", label: "Packages", icon: "fas fa-box-open" },
-    { path: "/admin/dashboard/payments", label: "Payments", icon: "fas fa-credit-card" },
-    { path: "/admin/dashboard/devices", label: "Devices", icon: "fas fa-laptop" },
-    { path: "/admin/dashboard/settings", label: "Settings", icon: "fas fa-cog" },
+    {
+      path: "/admin/dashboard/packages",
+      label: "Packages",
+      icon: "fas fa-box-open",
+    },
+    {
+      path: "/admin/dashboard/payments",
+      label: "Payments",
+      icon: "fas fa-credit-card",
+    },
+    {
+      path: "/admin/dashboard/devices",
+      label: "Devices",
+      icon: "fas fa-laptop",
+    },
+    {
+      path: "/admin/dashboard/settings",
+      label: "Settings",
+      icon: "fas fa-cog",
+    },
   ];
 
   return (
@@ -47,33 +67,41 @@ export default function AdminLayout() {
           <div className="row clearfix">
             {/* SIDEBAR */}
             <div className="col-lg-3 col-md-12 mb-4">
-              <div className="order-box text-center">
+              <div className="card shadow-sm rounded-4 p-3 h-100">
                 {/* PROFILE */}
-                <div className="mb-4">
+                <div className="text-center mb-4">
                   <img
                     src="/images/avatar.png"
-                    className="rounded-circle mb-2"
+                    className="rounded-circle mb-2 border border-3 border-primary"
                     style={{ width: 90, height: 90 }}
                   />
-                  <h5> {user && user ? user?.name : "Guest"} </h5>
-                  <small className="text-muted">+233 55 000 0000</small>
-                  <div className="mt-2">
-                    <span className="badge bg-success">
-                      <i className="fas fa-wifi me-1" /> Connected
-                    </span>
-                  </div>
+                  <h5 className="fw-bold mt-2">{user?.name || "Guest"}</h5>
+                  <small className="text-muted d-block mb-2">
+                    +233 55 000 0000
+                  </small>
+
+                  <span className="badge bg-gradient-success text-white px-3 py-2 rounded-pill">
+                    <i className="fas fa-wifi me-1"></i> Connected
+                  </span>
                 </div>
 
                 {/* MENU */}
-                <ul className="list-group text-start">
+                <ul className="list-group list-group-flush">
                   {menuItems.map((item) => (
                     <li
                       key={item.path}
-                      className={`list-group-item ${
+                      className={`list-group-item border-0 rounded-3 mb-1 ${
                         location.pathname === item.path
-                          ? "active bg-primary text-white"
-                          : ""
+                          ? "text-white"
+                          : "text-dark"
                       }`}
+                      style={{
+                        background:
+                          location.pathname === item.path
+                            ? "linear-gradient(135deg,#6366f1,#8b5cf6,#ec4899)"
+                            : "transparent",
+                        cursor: "pointer",
+                      }}
                     >
                       <NavLink
                         to={item.path}
@@ -84,13 +112,14 @@ export default function AdminLayout() {
                       </NavLink>
                     </li>
                   ))}
-                  <li className="list-group-item decoration-none">
+
+                  {/* LOGOUT */}
+                  <li className="list-group-item border-0 mt-3">
                     <button
-                      className="d-flex align-items-center btn btn-link text-start w-100 p-0"
+                      className="d-flex align-items-center btn btn-outline-danger w-100 justify-content-start rounded-3"
                       onClick={logout}
-                      style={{ textDecoration: "none" }} // ✅ removes underline
                     >
-                      <i className="fas fa-sign-out-alt text-danger me-2"></i>
+                      <i className="fas fa-sign-out-alt me-2"></i>
                       Logout
                     </button>
                   </li>

@@ -12,6 +12,7 @@ import Devices from "./views/admin/devices";
 import Settings from "./views/admin/Settings";
 import AddDevice from "./views/admin/AddDevice";
 import SingleDevice from "./views/admin/SingleDevice";
+import AddPackages from "./views/admin/AddPackages";
 
 export const ROUTE_CONFIG = {
   LANDING: {
@@ -42,10 +43,12 @@ export const ROUTE_CONFIG = {
       { index: true, element: <AdminHome /> },
       { path: "users", element: <UsersPage /> },
       { path: "packages", element: <Packages /> },
+      { path: "packages/add", element: <AddPackages /> },
+       { path: "packages/edit/:id", element: <AddPackages /> },
       { path: "payments", element: <Payment /> },
       { path: "devices", element: <Devices /> },
       { path: "devices/add", element: <AddDevice /> },
-       { path: "devices/device_name", element: <SingleDevice /> },
+      { path: "devices/device_name", element: <SingleDevice /> },
       { path: "settings", element: <Settings /> },
     ],
   },

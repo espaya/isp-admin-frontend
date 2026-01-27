@@ -1,150 +1,148 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Wifi,
-  Zap,
-  Crown,
   Plus,
   Edit2,
   Trash2,
-  Eye,
-  CheckCircle,
   Clock,
   Download,
-  Upload,
-  Users,
-  BarChart3,
-  Shield,
+  CheckCircle,
+  Power,
+  Slash,
+  LoaderCircleIcon,
+  PowerOff,
+  Laptop,
 } from "lucide-react";
-
-/* ------------------ DATA ------------------ */
-
-const packagesData = [
-  {
-    id: 1,
-    name: "Daily Starter",
-    description: "Perfect for quick browsing and light usage",
-    price: 10,
-    currency: "¢",
-    duration: "24 Hours",
-    speed: "10 Mbps",
-    data: "Unlimited",
-    status: "active",
-    gradient: "linear-gradient(135deg,#10b981,#059669)",
-    icon: <Wifi size={24} />,
-    badge: "Active",
-    badgeColor: "bg-success-subtle text-success",
-    users: 1245,
-    popularity: 85,
-    features: ["24/7 Support", "No Throttling", "Basic Support"],
-  },
-  {
-    id: 2,
-    name: "Weekly Pro",
-    description: "Best value for regular users and families",
-    price: 50,
-    currency: "¢",
-    duration: "7 Days",
-    speed: "20 Mbps",
-    data: "Unlimited",
-    status: "popular",
-    gradient: "linear-gradient(135deg,#3b82f6,#2563eb)",
-    icon: <Zap size={24} />,
-    badge: "Most Popular",
-    badgeColor: "bg-primary-subtle text-primary",
-    users: 2890,
-    popularity: 95,
-    features: ["Priority Support", "Family Sharing", "Ad Blocker"],
-  },
-  {
-    id: 3,
-    name: "Monthly Elite",
-    description: "For power users, gamers, and offices",
-    price: 150,
-    currency: "¢",
-    duration: "30 Days",
-    speed: "50 Mbps",
-    data: "Unlimited",
-    status: "premium",
-    gradient: "linear-gradient(135deg,#8b5cf6,#6d28d9)",
-    icon: <Crown size={24} />,
-    badge: "Premium",
-    badgeColor: "bg-purple-subtle text-purple",
-    users: 876,
-    popularity: 75,
-    features: ["24/7 VIP Support", "Gaming Mode", "4K Streaming"],
-  },
-  {
-    id: 4,
-    name: "Quarterly Business",
-    description: "Enterprise-grade connectivity for businesses",
-    price: 400,
-    currency: "¢",
-    duration: "90 Days",
-    speed: "100 Mbps",
-    data: "Unlimited",
-    status: "business",
-    gradient: "linear-gradient(135deg,#f59e0b,#d97706)",
-    icon: <Shield size={24} />,
-    badge: "Business",
-    badgeColor: "bg-warning-subtle text-warning",
-    users: 324,
-    popularity: 60,
-    features: ["99.9% Uptime", "Static IP", "Dedicated Support"],
-  },
-  {
-    id: 5,
-    name: "Student Plan",
-    description: "Affordable internet for students",
-    price: 30,
-    currency: "¢",
-    duration: "30 Days",
-    speed: "15 Mbps",
-    data: "Unlimited",
-    status: "special",
-    gradient: "linear-gradient(135deg,#06b6d4,#0891b2)",
-    icon: <Users size={24} />,
-    badge: "Student",
-    badgeColor: "bg-info-subtle text-info",
-    users: 1567,
-    popularity: 80,
-    features: ["Study Mode", "Educational Discount", "Group Sharing"],
-  },
-  {
-    id: 6,
-    name: "Add New Package",
-    description: "Create a custom internet package",
-    price: "Custom",
-    currency: "",
-    duration: "Flexible",
-    speed: "Custom",
-    data: "Custom",
-    status: "add",
-    gradient: "linear-gradient(135deg,#e5e7eb,#d1d5db)",
-    icon: <Plus size={24} />,
-    badge: "New",
-    badgeColor: "bg-light text-dark",
-    features: ["Custom Speeds", "Flexible Duration", "Tailored Pricing"],
-  },
-];
-
-/* ------------------ COMPONENT ------------------ */
+import { Link, useNavigate } from "react-router-dom";
+import fetchAllPackages from "../../controller/FetchAllPackages";
+import Swal from "sweetalert2";
+import Cookies from "js-cookie";
 
 export default function Packages() {
-  const [viewMode, setViewMode] = useState("grid");
-
+  const [packages, setPackages] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState({});
+  const [toggleLoadingIds, setToggleLoadingIds] = useState([]);
 
-  const filteredPackages = packagesData.filter(
+  const apiBase = import.meta.env.VITE_API_URL;
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    fetchAllPackages(setLoading, apiBase, setErrors, setPackages);
+  }, []);
+
+  /* ================= STATS ================= */
+  const totalPackages = packages.length;
+  const activePackages = packages.filter((p) => p.isActive).length;
+  const inactivePackages = totalPackages - activePackages;
+
+  /* ================= FILTER ================= */
+  const filteredPackages = packages.filter(
     (pkg) =>
       pkg.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       pkg.description.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
+  /* ================= ACTIONS ================= */
+  const toggleStatus = async (pkg) => {
+    setErrors({});
+    setToggleLoadingIds((prev) => [...prev, pkg.id]);
+
+    try {
+      await fetch(`${apiBase}/sanctum/csrf-cookie`, { credentials: "include" });
+
+      const response = await fetch(`${apiBase}/api/packages/${pkg.id}/toggle`, {
+        method: "PATCH",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+          "X-XSRF-TOKEN": decodeURIComponent(Cookies.get("XSRF-TOKEN")),
+        },
+        body: JSON.stringify({ isActive: !pkg.isActive }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        setErrors(data.errors || { general: data.message });
+        setTimeout(() => setErrors({}), 3000);
+        return;
+      }
+
+      // Update package state after toggle
+      setPackages((prev) =>
+        prev.map((p) =>
+          p.id === pkg.id ? { ...p, isActive: !p.isActive } : p,
+        ),
+      );
+
+      Swal.fire({
+        title: "Success",
+        icon: "success",
+        text: data.message,
+        showCloseButton: true,
+      });
+    } catch (err) {
+      setErrors({ general: err.message });
+    } finally {
+      setToggleLoadingIds((prev) => prev.filter((id) => id !== pkg.id));
+    }
+  };
+
+  const deletePkg = async (id) => {
+    try {
+      let deletePackge = await Swal.fire({
+        title: "Are you sure",
+        text: "Do you want to permanently delete this package? <br>This action cannot be undone",
+        showCancelButton: true,
+        showConfirmButton: true,
+        confirmButtonText: "Proceed",
+        icon: "warning",
+        iconColor: "red",
+      });
+
+      if (deletePackge.isConfirmed) {
+        const response = await fetch(`${apiBase}/api/delete-package/${id}`, {
+          credentials: "include",
+          method: "DELETE",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+            "X-XSRF-TOKEN": decodeURIComponent(Cookies.get("XSRF-TOKEN")),
+          },
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          setErrors({ general: data.message });
+          return;
+        }
+
+        fetchAllPackages(setLoading, apiBase, setErrors, setPackages);
+
+        Swal.fire({
+          icon: "success",
+          title: "Success",
+          text: data.message,
+          showCloseButton: true,
+        });
+      }
+    } catch (err) {
+      setErrors({ general: err.message });
+      setTimeout(() => {
+        setErrors({});
+      }, 3000);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  /* ================= UI ================= */
   return (
-    <div
-      className="container-fluid px-4 py-4"
-      style={{ background: "#f8fafc" }}
-    >
+    <div className="container-fluid px-4 py-4 bg-light">
       {/* HEADER */}
       <div
         className="p-4 rounded-4 text-white shadow mb-5"
@@ -154,63 +152,53 @@ export default function Packages() {
       >
         <div className="d-flex justify-content-between align-items-center">
           <div>
-            <h1 className="fw-bold mb-1 d-flex align-items-center gap-2">
+            <h1 className="fw-bold d-flex align-items-center gap-2">
               <Wifi /> Internet Packages
             </h1>
             <p className="opacity-75 mb-0">
-              Manage internet plans, pricing & subscriptions
+              Manage pricing, validity & availability
             </p>
           </div>
-          <div className="d-flex gap-2">
-            <button className="btn btn-light fw-semibold">
-              <Eye size={16} className="me-2" />
-              Preview
-            </button>
+          <Link to="/admin/dashboard/packages/add">
             <button className="btn btn-dark fw-semibold">
               <Plus size={16} className="me-2" />
               Add Package
             </button>
-          </div>
+          </Link>
         </div>
       </div>
 
       {/* STATS */}
-      <div className="row g-4 mb-5">
+      <div className="row g-4 mb-4">
         {[
           {
             label: "Total Packages",
-            value: packagesData.length - 1,
-            icon: <Wifi />,
+            value: totalPackages,
             gradient: "linear-gradient(135deg,#3b82f6,#6366f1)",
+            icon: <Wifi size={24} />,
           },
           {
-            label: "Active Users",
-            value: "7,102",
-            icon: <Users />,
+            label: "Active Packages",
+            value: activePackages,
             gradient: "linear-gradient(135deg,#10b981,#22c55e)",
+            icon: <CheckCircle size={24} />,
           },
           {
-            label: "Avg. Rating",
-            value: "4.8 / 5",
-            icon: <BarChart3 />,
+            label: "Inactive Packages",
+            value: inactivePackages,
             gradient: "linear-gradient(135deg,#f59e0b,#f97316)",
-          },
-          {
-            label: "Revenue",
-            value: "¢12,450",
-            icon: <span className="fw-bold">¢</span>,
-            gradient: "linear-gradient(135deg,#8b5cf6,#ec4899)",
+            icon: <Power size={24} />,
           },
         ].map((s, i) => (
-          <div key={i} className="col-lg-3 col-md-6">
+          <div key={i} className="col-md-4">
             <div
               className="card border-0 shadow-lg text-white"
               style={{ background: s.gradient }}
             >
-              <div className="card-body p-4 d-flex justify-content-between">
+              <div className="card-body d-flex justify-content-between align-items-center">
                 <div>
                   <small className="opacity-75">{s.label}</small>
-                  <h3 className="fw-bold mt-1">{s.value}</h3>
+                  <h2 className="fw-bold mt-1">{s.value}</h2>
                 </div>
                 <div className="bg-white bg-opacity-25 p-3 rounded-circle">
                   {s.icon}
@@ -221,96 +209,119 @@ export default function Packages() {
         ))}
       </div>
 
-      {/* SEARCH + VIEW */}
+      {/* SEARCH */}
       <div className="card border-0 shadow-sm mb-4">
-        <div className="card-body d-flex justify-content-between align-items-center">
+        <div className="card-body">
           <input
-            className="form-control w-50"
+            className="form-control"
             placeholder="Search packages..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
-          <div className="btn-group">
-            <button
-              className={`btn ${viewMode === "grid" ? "btn-primary" : "btn-outline-primary"}`}
-              onClick={() => setViewMode("grid")}
-            >
-              <i className="fa fa-search"></i>
-            </button>
-          </div>
         </div>
       </div>
 
-      {/* PACKAGES */}
+      {/* ERRORS */}
+      {errors.general && (
+        <div className="alert alert-danger">{errors.general}</div>
+      )}
+
+      {/* LOADING */}
+      {loading && (
+        <div className="text-center py-5 text-muted">Loading packages…</div>
+      )}
+
+      {/* PACKAGES GRID */}
       <div className="row g-4">
         {filteredPackages.map((pkg) => (
-          <div
-            key={pkg.id}
-            className={ "col-lg-4 col-md-6"}
-          >
-            <div className="card border-0 shadow-lg h-100">
-              <div className="card-body p-4">
-                <div className="d-flex justify-content-between mb-4">
-                  <div
-                    className="p-3 rounded-circle text-white"
-                    style={{ background: pkg.gradient }}
+          <div key={pkg.id} className="col-lg-4 col-md-6">
+            <div className="card border-0 shadow-sm h-100 package-card">
+              <div className="card-body p-4 d-flex flex-column">
+                {/* Header */}
+                <div className="d-flex justify-content-between mb-3">
+                  <h5 className="fw-bold">{pkg.name}</h5>
+                  <span
+                    className={`${
+                      pkg.isActive ? "blinking text-success" : "text-secondary"
+                    }`}
+                    style={{ fontSize: "1.2rem" }}
+                    title={pkg.isActive ? "Active" : "Inactive"}
                   >
-                    {pkg.icon}
-                  </div>
-                  <span className={`badge ${pkg.badgeColor} px-3 py-2`}>
-                    {pkg.badge}
+                    {pkg.isActive ? <Wifi /> : <Slash />}
                   </span>
                 </div>
 
-                <h5 className="fw-bold">{pkg.name}</h5>
-                <p className="text-muted small mb-3">{pkg.description}</p>
+                <p className="text-muted small flex-grow-1">
+                  {pkg.description}
+                </p>
 
-                <h2 className="fw-bold mb-3">
-                  {pkg.currency}
-                  {pkg.price}
-                  {pkg.price !== "Custom" && (
-                    <small className="text-muted ms-2">/ plan</small>
-                  )}
-                </h2>
+                <h3 className="fw-bold mb-3">
+                  GHS {pkg.price}
+                  <small className="text-muted fs-6"> / plan</small>
+                </h3>
 
                 <ul className="list-unstyled small mb-4">
                   <li>
-                    <Clock size={14} className="me-2" /> {pkg.duration}
+                    <Clock size={17} className="me-2" /> {pkg.validity} day(s)
                   </li>
                   <li>
-                    <Download size={14} className="me-2" /> {pkg.speed}
+                    <Download size={17} className="me-2" /> {pkg.dataLimit} GB
                   </li>
                   <li>
-                    <Upload size={14} className="me-2" /> {pkg.data}
+                    <CheckCircle size={17} className="me-2" /> {pkg.speed} Mbps
                   </li>
-                  {pkg.features.slice(0, 2).map((f, i) => (
-                    <li key={i}>
-                      <CheckCircle size={14} className="text-success me-2" />
-                      {f}
-                    </li>
-                  ))}
+                  <li>
+                    <Laptop size={17} className="me-2" /> {pkg.devices}{" "}
+                    Device(s)
+                  </li>
                 </ul>
 
-                {pkg.status === "add" ? (
-                  <button className="btn btn-outline-primary w-100">
-                    <Plus size={16} className="me-2" />
-                    Create Package
+                {/* ACTIONS */}
+                <div className="d-flex gap-2 mt-auto">
+                  <button
+                    className="btn btn-outline-primary flex-fill"
+                    onClick={() =>
+                      navigate(`/admin/dashboard/packages/edit/${pkg.id}`)
+                    }
+                  >
+                    <Edit2 size={16} className="me-2" />
+                    Edit
                   </button>
-                ) : (
-                  <div className="d-flex gap-2">
-                    <button className="btn btn-outline-primary flex-fill">
-                      <Edit2 size={16} className="me-2" />
-                      Edit
-                    </button>
-                    <button className="btn btn-outline-danger">
-                      <Trash2 size={16} />
-                    </button>
-                  </div>
-                )}
+
+                  <button
+                    className={`btn ${
+                      pkg.isActive
+                        ? "btn-outline-warning"
+                        : "btn-outline-success"
+                    }`}
+                    onClick={() => toggleStatus(pkg)}
+                    title="Toggle Status"
+                    disabled={toggleLoadingIds.includes(pkg.id)}
+                  >
+                    {toggleLoadingIds.includes(pkg.id) ? (
+                      <LoaderCircleIcon size={16} />
+                    ) : pkg.isActive ? (
+                      <PowerOff size={16} />
+                    ) : (
+                      <Power size={16} />
+                    )}
+                  </button>
+
+                  <button
+                    className="btn btn-outline-danger"
+                    onClick={() => deletePkg(pkg.id)}
+                  >
+                    <Trash2 size={16} />
+                  </button>
+                </div>
               </div>
             </div>
           </div>
         ))}
+
+        {!loading && filteredPackages.length === 0 && (
+          <div className="text-center text-muted py-5">No packages found</div>
+        )}
       </div>
     </div>
   );

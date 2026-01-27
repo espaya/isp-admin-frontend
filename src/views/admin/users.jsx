@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "lucide-react";
 import {
   Search,
   Filter,
@@ -19,6 +20,7 @@ import {
   X,
   SlidersHorizontal,
   Brush,
+  Plus,
 } from "lucide-react";
 
 // Mock data - replace with actual API data
@@ -125,8 +127,34 @@ export default function UsersPage() {
       <div className="max-w-7xl mx-auto">
         {/* Header */}
 
-        {/* Filters and Search - Compact Horizontal */}
         <div className="bg-white rounded-lg shadow-sm border p-3 mb-4">
+          <div
+            className="p-4 rounded-4 text-white shadow mb-5"
+            style={{
+              background: "linear-gradient(135deg,#6366f1,#8b5cf6,#ec4899)",
+            }}
+          >
+            <div className="d-flex justify-content-between align-items-center">
+              <div>
+                <h1 className="fw-bold d-flex align-items-center gap-2">
+                  <Users /> Users
+                </h1>
+                <p className="opacity-75 mb-0">
+                  Manage users, create, read, update & delete
+                </p>
+              </div>
+
+              <a
+                to="/admin/dashboard/packages/add"
+                className="btn btn-dark fw-semibold"
+              >
+                <UserPlus size={16} className="me-2 text-white" />
+                Add User
+              </a>
+            </div>
+          </div>
+
+          {/* Filters and Search - Compact Horizontal */}
           <div className="d-flex flex-wrap align-items-center gap-3">
             {/* Search with colorful icon */}
             <div className="flex-grow-1" style={{ minWidth: "200px" }}>
