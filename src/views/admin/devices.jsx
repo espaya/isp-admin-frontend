@@ -28,60 +28,15 @@ import {
   Network,
   Users,
 } from "lucide-react";
+import DevicesTable from "../../components/device/devicesTable";
+import Cookies from "js-cookie";
 
-// Mock device data
-const initialDevices = [
-  {
-    id: 1,
-    name: "L009 – Adum POP",
-    ip: "192.168.88.1",
-    location: "Adum, Kumasi",
-    status: "online",
-    model: "Mikrotik L009",
-    uptime: "45 days, 12:34:21",
-    cpu: 35,
-    memory: 42,
-    clients: 124,
-    lastSeen: "2 minutes ago",
-    bandwidth: { upload: "85 Mbps", download: "120 Mbps" },
-    temperature: "42°C",
-    firmware: "RouterOS 7.12",
-    snmp: "enabled",
-    alerts: 2,
-    color: "linear-gradient(135deg,#3b82f6,#06b6d4)",
-    icon: <Wifi size={20} />,
-  },
-  {
-    id: 2,
-    name: "L009 – Airport Site",
-    ip: "10.10.1.1",
-    location: "Airport, Accra",
-    status: "offline",
-    model: "Mikrotik L009",
-    uptime: "0 days, 00:00:00",
-    cpu: 0,
-    memory: 0,
-    clients: 0,
-    lastSeen: "5 hours ago",
-    bandwidth: { upload: "0 Mbps", download: "0 Mbps" },
-    temperature: "N/A",
-    firmware: "RouterOS 7.10",
-    snmp: "enabled",
-    alerts: 5,
-    color: "linear-gradient(135deg,#ef4444,#e11d48)",
-    icon: <AlertCircle size={20} />,
-  },
-  // ... add remaining devices
-];
+const apiBase = import.meta.env.VITE_API_URL;
 
 export default function Devices() {
-  const [devices, setDevices] = useState(initialDevices);
+  const [devices, setDevices] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
-  const [selectedDevices, setSelectedDevices] = useState([]);
-  // Pagination state
-  const [currentPage, setCurrentPage] = useState(1);
-  const [rowsPerPage] = useState(10);
   const [stats, setStats] = useState({
     total: 0,
     online: 0,
@@ -90,76 +45,58 @@ export default function Devices() {
     totalClients: 0,
     totalBandwidth: 0,
   });
+  const [loading, setLoading] = useState(false);
 
-  // Calculate stats
-  useEffect(() => {
-    const total = devices.length;
-    const online = devices.filter((d) => d.status === "online").length;
-    const offline = devices.filter((d) => d.status === "offline").length;
-    const totalClients = devices.reduce((sum, d) => sum + d.clients, 0);
-    const totalBandwidth = devices.reduce(
-      (sum, d) => sum + parseInt(d.bandwidth.download),
-      0,
-    );
-    const avgUptime = devices.filter((d) => d.status === "online").length;
+  // Fetch devices
+  const fetchDevices = async () => {
+    setLoading(true);
+    try {
+      await fetch(`${apiBase}/sanctum/csrf-cookie`, { credentials: "include" });
 
-    setStats({
-      total,
-      online,
-      offline,
-      avgUptime,
-      totalClients,
-      totalBandwidth,
-    });
-  }, [devices]);
+      const res = await fetch(`${apiBase}/api/all-devices`, {
+        credentials: "include",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          "X-XSRF-TOKEN": decodeURIComponent(Cookies.get("XSRF-TOKEN")),
+        },
+      });
 
-  const toggleDeviceStatus = (id) => {
-    setDevices(
-      devices.map((device) =>
-        device.id === id
-          ? {
-              ...device,
-              status: device.status === "online" ? "offline" : "online",
-              lastSeen:
-                device.status === "online"
-                  ? "Just went offline"
-                  : "Just came online",
-            }
-          : device,
-      ),
-    );
-  };
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || "Failed to fetch devices");
 
-  const refreshDevice = (id) => {
-    setDevices(
-      devices.map((device) =>
-        device.id === id
-          ? {
-              ...device,
-              lastSeen: "Just checked",
-              cpu: Math.floor(Math.random() * 100),
-              memory: Math.floor(Math.random() * 100),
-            }
-          : device,
-      ),
-    );
-  };
-
-  const handleSelectDevice = (id) => {
-    setSelectedDevices((prev) =>
-      prev.includes(id)
-        ? prev.filter((deviceId) => deviceId !== id)
-        : [...prev, id],
-    );
-  };
-
-  const handleSelectAll = () => {
-    if (selectedDevices.length === filteredDevices.length) {
-      setSelectedDevices([]);
-    } else {
-      setSelectedDevices(filteredDevices.map((d) => d.id));
+      setDevices(data.data || []);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
     }
   };
+
+  // Fetch card stats from backend
+  const fetchStats = async () => {
+    try {
+      const res = await fetch(`${apiBase}/api/device-cards-stats`, {
+        credentials: "include",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          "X-XSRF-TOKEN": decodeURIComponent(Cookies.get("XSRF-TOKEN")),
+        },
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || "Failed to fetch stats");
+
+      setStats(data);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  useEffect(() => {
+    fetchDevices();
+    fetchStats();
+  }, []);
 
   const filteredDevices = devices.filter((device) => {
     const matchesSearch =
@@ -170,25 +107,6 @@ export default function Devices() {
       statusFilter === "all" || device.status === statusFilter;
     return matchesSearch && matchesStatus;
   });
-
-  const getStatusColor = (status) => {
-    switch (status) {
-      case "online":
-        return "bg-success text-white";
-      case "offline":
-        return "bg-danger text-white";
-      default:
-        return "bg-secondary text-white";
-    }
-  };
-
-  // Pagination logic
-  const indexOfLast = currentPage * rowsPerPage;
-  const indexOfFirst = indexOfLast - rowsPerPage;
-  const currentDevices = filteredDevices.slice(indexOfFirst, indexOfLast);
-  const totalPages = Math.ceil(filteredDevices.length / rowsPerPage);
-
-  const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
   return (
     <div className="container-fluid py-4">
@@ -209,7 +127,13 @@ export default function Devices() {
             </p>
           </div>
           <div className="d-flex gap-2">
-            <button className="btn btn-light fw-semibold d-flex align-items-center gap-1">
+            <button
+              className="btn btn-light fw-semibold d-flex align-items-center gap-1"
+              onClick={() => {
+                fetchDevices();
+                fetchStats();
+              }}
+            >
               <RefreshCw size={16} /> Refresh All
             </button>
             <Link
@@ -319,122 +243,7 @@ export default function Devices() {
         </div>
       </div>
 
-      {/* Devices Table */}
-      <div className="card shadow-lg border-0">
-        <div className="table-responsive">
-          <table className="table table-hover align-middle mb-0">
-            <thead className="bg-light">
-              <tr>
-                <th>Device</th>
-                <th>Status</th>
-                <th>CPU</th>
-                <th>Memory</th>
-                <th>Clients</th>
-                <th>Bandwidth</th>
-                <th>Last Seen</th>
-                <th className="text-end">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredDevices.map((device) => (
-                <tr key={device.id}>
-                  <td>
-                    <div className="d-flex align-items-center gap-2">
-                      <div
-                        className="p-2 rounded-circle d-flex justify-content-center align-items-center text-white"
-                        style={{
-                          width: 40,
-                          height: 40,
-                          background: device.color,
-                        }}
-                      >
-                        {device.icon}
-                      </div>
-                      <div>
-                        <div className="fw-bold">{device.name}</div>
-                        <small className="text-muted">
-                          {device.ip} • {device.location}
-                        </small>
-                        <div className="text-muted small">
-                          {device.model} • {device.firmware}
-                        </div>
-                      </div>
-                    </div>
-                  </td>
-                  <td>
-                    <span
-                      className={`badge ${getStatusColor(device.status)} small`}
-                    >
-                      {device.status.toUpperCase()}
-                    </span>
-                    <div className="text-muted small mt-1">
-                      Uptime: {device.uptime}
-                    </div>
-                  </td>
-                  <td className="fw-bold">{device.cpu}%</td>
-                  <td className="fw-bold">{device.memory}%</td>
-                  <td className="fw-bold">{device.clients}</td>
-                  <td className="fw-bold">
-                    {device.bandwidth.download} ↓ / {device.bandwidth.upload} ↑
-                  </td>
-                  <td>
-                    <small className="text-muted">{device.lastSeen}</small>
-                  </td>
-                  <td className="text-end">
-                    <button
-                      className="btn btn-sm btn-light me-1"
-                      onClick={() => refreshDevice(device.id)}
-                    >
-                      <RefreshCw size={14} />
-                    </button>
-                    <button
-                      className="btn btn-sm btn-light"
-                      onClick={() => toggleDeviceStatus(device.id)}
-                    >
-                      {device.status === "online" ? (
-                        <XCircle size={14} className="text-danger" />
-                      ) : (
-                        <CheckCircle size={14} className="text-success" />
-                      )}
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      {/* Pagination */}
-      {totalPages > 1 && (
-        <div className="d-flex justify-content-center mt-4 gap-2">
-          <button
-            className="btn btn-sm btn-outline-primary"
-            onClick={() => currentPage > 1 && paginate(currentPage - 1)}
-            disabled={currentPage === 1}
-          >
-            Prev
-          </button>
-          {[...Array(totalPages)].map((_, i) => (
-            <button
-              key={i}
-              className={`btn btn-sm ${currentPage === i + 1 ? "btn-primary" : "btn-outline-primary"}`}
-              onClick={() => paginate(i + 1)}
-            >
-              {i + 1}
-            </button>
-          ))}
-          <button
-            className="btn btn-sm btn-outline-primary"
-            onClick={() =>
-              currentPage < totalPages && paginate(currentPage + 1)
-            }
-            disabled={currentPage === totalPages}
-          >
-            Next
-          </button>
-        </div>
-      )}
+      <DevicesTable devices={devices} setDevices={setDevices} />
 
       {/* Empty State */}
       {filteredDevices.length === 0 && (

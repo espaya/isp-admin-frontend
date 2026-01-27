@@ -1,11 +1,12 @@
 import { useContext, useState } from "react";
 import { AuthContext } from "../../auth/AuthContext";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 export default function LoginForm() {
   const apiBase = import.meta.env.VITE_API_URL;
   const { fetchUser } = useContext(AuthContext);
   const navigate = useNavigate();
+  const location = useLocation();
   const [error, setError] = useState({});
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -14,6 +15,8 @@ export default function LoginForm() {
     password: "",
     remember: false,
   });
+
+  const from = location.state?.from?.pathname;
 
   const handleChange = (e) => {
     const { name, value, checked, type } = e.target;
@@ -65,7 +68,7 @@ export default function LoginForm() {
       await fetchUser(); // Refresh user data after login
 
       // Redirect on success
-      navigate(data.redirect_url || "/", { replace: true });
+      navigate(from || data.redirect_url, { replace: true });
     } catch (err) {
       setError({ general: "An error occurred. Please try again." });
     } finally {
