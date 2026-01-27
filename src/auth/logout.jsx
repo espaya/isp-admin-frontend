@@ -37,7 +37,7 @@ const useLogout = () => {
       await fetchUser();
 
       // 4. Navigate to login page
-      navigate("/login", { replace: true });
+      navigate("/", { replace: true });
 
       // 5. Clear local user state
       setUser(null);

@@ -1,0 +1,328 @@
+/* Dark Version Style CSS Code */
+
+.dark-body,
+.dark-body .reply-comment,
+.dark-body .price-block_one-inner,
+.dark-body .benefit-block_one-inner,
+.dark-body .service-block_two-inner,
+.dark-body .news-block_two-inner::before,
+.dark-body .testimonial-block_one-outer::before,
+.dark-body .main-header .main-menu .navigation > li > ul,
+.dark-body .main-header .main-menu .navigation > li > ul > li > ul{
+	background-color: #22253c;
+}
+
+.dark-body .gallery-two,
+.dark-body .gallery-two .inner-container::before,
+.dark-body .gallery-one,
+.dark-body .price-one,
+.dark-body .benefit-one,
+.dark-body .fluid-two,
+.dark-body .package-one,
+.dark-body .news-detail_inner::before,
+.dark-body .price-block_two-inner,
+.dark-body .service-two_pattern,
+.dark-body .faq-one .inner-container,
+.dark-body .news-two_pattern-layer,
+.dark-body .news-block_one-inner::before,
+.dark-body .cta-three.style-two::before,
+.dark-body .main-header.fixed-header .header-lower{
+	background-color: #2d3049;
+}
+
+.dark-body .sidebar-info-contents .lower-box,
+.dark-body .sidebar-info-contents .content-inner,
+.dark-body .news-detail_two .prev-post,
+.dark-body .news-detail_two .next-post,
+.dark-body .about-sidebar .sidebar-inner,
+.dark-body .blog-author_box,
+.dark-body .news-detail blockquote,
+.dark-body .sidebar-widget_two .widget-content,
+.dark-body .shop-detail_gallery-column .image,
+.dark-body .shop-item .image,
+.dark-body .comment-form .default-form,
+.dark-body .comments-content,
+.dark-body .mobile-menu .menu-box,
+.dark-body .project-more_posts,
+.dark-body .team-detail_two .contact-box,
+.dark-body .price-one.style-two{
+	background-color: #151724;
+}
+
+.dark-body .service-list li a{
+	color:var(--white-color);
+	background-color: #151724;
+}
+
+.dark-body .contact-widget .logo img,
+.dark-body .about-one_pattern,
+.dark-body .mobile-menu .nav-logo img,
+.dark-body .main-header .mobile-nav-toggler,
+.dark-body .main-header.header-style-one .logo-box .logo img,
+.dark-body .main-header.header-style-two .logo-box .logo img{
+	filter: invert(100%);
+}
+
+.dark-body .shop-item .rating .light,
+.dark-body .shop-item .price,
+.dark-body .shop-item h5 a,
+.dark-body .fluid-two_text,
+.dark-body .fluid-two_feature,
+.dark-body .sec-title_text,
+.dark-body .fluid-one_feature,
+.dark-body .fluid-one_text,
+.dark-body .fluid-one_feature strong,
+.dark-body .about-one_lists li,
+.dark-body .faq-one_text,
+.dark-body .about-sidebar h3,
+.dark-body .about-one_list li,
+.dark-body .news-detail_two-author,
+.dark-body .news-detail_two-meta li,
+.dark-body .news-detail_two-heading,
+.dark-body .news-detail_two p,
+.dark-body .news-detail_two blockquote,
+.dark-body .sidebar-info-contents .content-inner h5,
+.dark-body .sidebar-info-contents .no-cart,
+.dark-body .sidebar-info-contents .lower-box h5,
+.dark-body .post-block .inner-box h6 a,
+.dark-body .post-block .inner-box .price-box,
+.dark-body .post-block .rating,
+.dark-body .news-detail_two .post-share-options .post-tags a,
+.dark-body .news-detail_two .post-share-options .social-links li a,
+.dark-body .news-detail_two-author-two-title,
+.dark-body .news-detail_two-author-two-text,
+.dark-body .news-detail_two .post-grid_icon,
+.dark-body .alternate-news h4,
+.dark-body .about-sidebar .social-box a,
+.dark-body .about-sidebar .text,
+.dark-body .blog-author_box h4,
+.dark-body .blog-author_box .text,
+.dark-body .blog-author_box .social-links li a,
+.dark-body .comments-area .group-title h4,
+.dark-body .sec-title_heading,
+.dark-body .about-one_bold-text,
+.dark-body .about-one_feature strong,
+.dark-body .news-detail_two .more-posts a,
+.dark-body .news-detail_two .prev-post .more-post_date,
+.dark-body .news-detail_two .next-post .more-post_date,
+.dark-body .news-detail_two .prev-post .prev-arrow,
+.dark-body .news-detail_two .next-post .next-arrow,
+.dark-body .about-one_feature,
+.dark-body .header-phone_box-inner,
+.dark-body .main-header .nav-btn,
+.dark-body .price-block_one-heading,
+.dark-body .price-block_one-text,
+.dark-body .news-block_one-meta li,
+.dark-body .news-block_one-heading a,
+.dark-body .price-block_one-list li,
+.dark-body .price-block_one-price,
+.dark-body .about-two_bold-text,
+.dark-body .about-two_list li,
+.dark-body .about-two p,
+.dark-body .post-widget .post h6 a,
+.dark-body .post-widget .post .post-date,
+.dark-body .contact-widget .text,
+.dark-body .sidebar-widget_title,
+.dark-body .service-detail_title,
+.dark-body .service-detail p,
+.dark-body .privacy-section h4,
+.dark-body .privacy-section .privacy-list li,
+.dark-body .privacy-section h3,
+.dark-body .privacy-section p,
+.dark-body .about-widget_text,
+.dark-body .about-two_price,
+.dark-body .about-two_price sub,
+.dark-body .about-two_price sup,
+.dark-body .team-detail_two p,
+.dark-body .service-block_two-text,
+.dark-body .facility-block_one-heading,
+.dark-body .facility-block_one-text,
+.dark-body .service-block_two-heading a,
+.dark-body .benefit-block_one-heading a,
+.dark-body .price-block_two-title,
+.dark-body .price-block_two-price,
+.dark-body .price-block_two-list li,
+.dark-body .price-block_two-list li i,
+.dark-body .gallery-block_two-heading a,
+.dark-body .gallery-block_two-released,
+.dark-body .gallery-block_two-meta li,
+.dark-body .testimonial-two_text,
+.dark-body .testimonial-two_author,
+.dark-body .news-block_two-heading a,
+.dark-body .news-block_two-meta li,
+.dark-body .counter-block_two-text,
+.dark-body .team-block_one-heading a,
+.dark-body .team-detail_two-title,
+.dark-body .team-detail_two-text,
+.dark-body .project-detail_title,
+.dark-body .project-detail p,
+.dark-body .comment-reply,
+.dark-body .filter-box .results,
+.dark-body .likes-option li,
+.dark-body .comment-options li a,
+.dark-body .project-more_posts .title,
+.dark-body .project-more_posts h6,
+.dark-body .project-detail_info,
+.dark-body .project-detail_info strong,
+.dark-body .project-detail_list li,
+.dark-body .project-detail_subtitle,
+.dark-body .service-detail_subtitle,
+.dark-body .service-detail_list li,
+.dark-body .team-detail_two-list li,
+.dark-body .team-detail_two-list li span,
+.dark-body .team-detail_two-socials span,
+.dark-body .team-detail_two-subtitle,
+.dark-body .comment-box .text,
+.dark-body .shop-detail_title,
+.dark-body .shop-detail_rating i,
+.dark-body .shop-detail_text,
+.dark-body .shop-detail_list li,
+.dark-body .shop-detail_list li span,
+.dark-body .shop-detail_socials li a,
+.dark-body .shop-detail_rating .fa-star.light,
+.dark-body .comments-area .group-title h3,
+.dark-body .comment-form .group-title h4,
+.dark-body .shop-detail_socials .share,
+.dark-body .prod-tabs .tabs-content p,
+.dark-body .related-products h3,
+.dark-body .team-detail_two .contact-box h3,
+.dark-body .team-detail_two .contact-box .text,
+.dark-body .comment-box .comment-info strong,
+.dark-body .main-header .outer-box .search-box-btn,
+.dark-body .main-header .main-menu .navigation > li > a,
+.dark-body .quantity-box .item-quantity input.qty-spinner,
+.dark-body .main-header .main-menu .navigation > li > ul > li > a,
+.dark-body .main-header .mobile-menu .navigation li:hover > a,
+.dark-body .main-header .mobile-menu .navigation li.current > a,
+.dark-body .prod-tabs .tabs-content .tab .title,
+.dark-body .comment-box .comment-info,
+.dark-body .comment-box .comment .rating,
+.dark-body .shop-comment-form h4,
+.dark-body .cart-table .prod-title,
+.dark-body .cart-table .prod-text,
+.dark-body .cart-table tbody tr td.price,
+.dark-body .cart-totals li,
+.dark-body .error-section h1,
+.dark-body .error-section h2,
+.dark-body .error-section .text,
+.dark-body .contact-one_info-list li,
+.dark-body .contact-one_info-list li strong,
+.dark-body .contact-one_socials-links li a,
+.dark-body .shipping-list li,
+.dark-body .shop-comment-form .rating-box .text,
+.dark-body .shop-comment-form .form-group label,
+.dark-body .cart-table thead tr th.prod-column,
+.dark-body .cart-table tbody tr td.sub-total,
+.dark-body .cart-table thead tr th,
+.dark-body .checkout-section h4,
+.dark-body .order-totals li,
+.dark-body .register-one h3,
+.dark-body .default-form label,
+.dark-body .order-box .order-total,
+.dark-body .default-form .check-box label,
+.dark-body .default-form .forgot,
+.dark-body .default-form .text,
+.dark-body .news-block_one-text,
+.dark-body .news-detail_meta li,
+.dark-body .news-detail_heading,
+.dark-body .news-detail p,
+.dark-body .news-detail_subheading,
+.dark-body .news-detail blockquote,
+.dark-body .default-form .text a,
+.dark-body .shipping-form .check-box label,
+.dark-body .shoping-cart-section .check-box label,
+.dark-body .contact-page-section .info-column .info-box h6,
+.dark-body .contact-page-section .info-column .info-box .box-inner .text,
+.dark-body .contact-page-section .info-column a,
+.dark-body .contact-page-section .info-column .social-box li a,
+.dark-body .shoping-cart-section .total-column .title-box,
+.dark-body .news-detail .post-share-options .post-tags a,
+.dark-body .contact-page-section-two .info li span,
+.dark-body .contact-page-section-two .info li,
+.dark-body .contact-form-section .form-column h3,
+.dark-body .mobile-menu .close-btn,
+.dark-body .xs-sidebar-group .close-button,
+.dark-body .mobile-menu .search-box .form-group button,
+.dark-body .news-detail .post-share-options .social-links li a,
+.dark-body .main-header .main-menu .navigation > li > ul > li > ul > li > a,
+.dark-body .quantity-box .bootstrap-touchspin .glyphicon-chevron-down:before,
+.dark-body .quantity-box .bootstrap-touchspin .glyphicon-chevron-up:before,
+.dark-body .main-header .main-menu .navigation > li > ul > li.dropdown > a:after,
+.dark-body .main-header .mobile-menu .navigation li.dropdown .dropdown-btn,
+.dark-body .main-header .mobile-menu .navigation li > a,
+.dark-body .main-header .mobile-nav-toggler{
+	color:var(--white-color);
+}
+
+.dark-body .default-form .form-group textarea::-webkit-input-placeholder,
+.dark-body .default-form .form-group input::-webkit-input-placeholder{
+	
+}
+
+.dark-body .hamburger span,
+.dark-body .team-block_one .border-one::after,
+.dark-body .main-header .nav-btn span{
+	background-color: var(--white-color);
+}
+
+.dark-body .facility-one_circle-one,
+.dark-body .facility-one_circle-two,
+.dark-body .facility-one_circle-three{
+	opacity: 0.10;
+}
+
+.dark-body .item-quantity,
+.dark-body .filter-box,
+.dark-body .cart-totals li,
+.dark-body .shipping-list li,
+.dark-body .cart-total-box,
+.dark-body .order-box,
+.dark-body .order-totals li,
+.dark-body .cart-table tbody tr,
+.dark-body .news-detail_inner::before,
+.dark-body .register-one .form-column .inner-column,
+.dark-body .cart-table tbody tr .prod-column .column-box .prod-thumb,
+.dark-body .shop-comment-form .rating-box .rating,
+.dark-body .shop-detail .prod-tabs .tab-btns::before,
+.dark-body .shop-detail_gallery-column .thumb,
+.dark-body .shop-detail_socials li a,
+.dark-body .shipping-outer .cart-shipping-box,
+.dark-body .project-more_posts::before,
+.dark-body .team-block_one .border-one,
+.dark-body .privacy-section .privacy-content,
+.dark-body .mobile-menu .navigation li,
+.dark-body .counter-two .inner-container,
+.dark-body .contact-page-section-two .info-column .inner-column,
+.dark-body .contact-page-section-two .info li,
+.dark-body .contact-page-section .info-column .social-box li a,
+.dark-body .contact-page-section .info-column .info-box .box-inner,
+.dark-body .news-block_two .lower-box,
+.dark-body .contact-one_socials-links li a,
+.dark-body .news-block_two-inner::before{
+	border-color: rgba(255, 255, 255, 0.10);
+}
+
+.dark-body .counter-block_two-counter{
+	-webkit-text-stroke-color: rgba(255,255,255, 1);
+}
+
+.dark-body .filter-box .form-group .ui-selectmenu-button.ui-button{
+	color:var(--white-color);
+	background-color:  rgba(var(--white-color-rgb), 0.20);
+}
+
+.dark-body .default-form.style-two .form-group input{
+	color:var(--white-color);
+	background-color:  rgba(var(--white-color-rgb), 0.10);
+}
+
+.dark-body .mobile-menu .search-box .form-group input[type="text"],
+.dark-body .mobile-menu .search-box .form-group input[type="search"]{
+	color:var(--white-color);
+	border-color: rgba(255, 255, 255, 0.10);
+}
+
+.dark-body .sidebar-info-contents .price{
+	color:var(--color-two);
+	background-color: var(--white-color);
+}

@@ -8,7 +8,7 @@ export default function GuestRoute({ children }) {
 
   if (loading) return <Spinner />; // Wait until user is fetched
 
-  if (user) return <Navigate to="/dashboard" replace />;
+  if (user) return <Navigate to="/admin/dashboard" replace />;
 
   return children;
 }
