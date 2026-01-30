@@ -21,6 +21,7 @@ export default function AddPackages() {
     isActive: false,
     description: "",
     devices: "",
+    type: "",
   });
 
   const handleChange = (e) => {
@@ -80,6 +81,7 @@ export default function AddPackages() {
           isActive: false,
           description: "",
           devices: "",
+          type: "",
         });
       }
     } catch (err) {
@@ -170,7 +172,7 @@ export default function AddPackages() {
                 </div>
 
                 {/* Price */}
-                <div className="col-md-6">
+                <div className="col-md-4">
                   <label className="form-label fw-semibold">
                     Price (GHS) *
                   </label>
@@ -189,7 +191,7 @@ export default function AddPackages() {
                 </div>
 
                 {/* Validity */}
-                <div className="col-md-6">
+                <div className="col-md-4">
                   <label className="form-label fw-semibold">
                     Validity (Days) *
                   </label>
@@ -204,6 +206,28 @@ export default function AddPackages() {
                   />
                   {errors?.validity && (
                     <small className="text-danger">{errors.validity[0]}</small>
+                  )}
+                </div>
+
+                {/* Type */}
+                <div className="col-md-4">
+                  <label className="form-label fw-semibold">Type *</label>
+                  <select
+                    className="form-control"
+                    name="type"
+                    value={formData.type ?? ""}
+                    onChange={handleChange}
+                  >
+                    <option value="" disabled>
+                      Select type
+                    </option>
+                    <option value="daily">Daily</option>
+                    <option value="weekly">Weekly</option>
+                    <option value="monthly">Monthly</option>
+                    <option value="special">Special</option>
+                  </select>
+                  {errors?.type && (
+                    <small className="text-danger">{errors.type[0]}</small>
                   )}
                 </div>
 
