@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "lucide-react";
 import {
   Search,
@@ -22,55 +22,8 @@ import {
   Brush,
   Plus,
 } from "lucide-react";
-
-// Mock data - replace with actual API data
-const mockUsers = [
-  {
-    id: 1,
-    name: "John Doe",
-    email: "john@example.com",
-    role: "User",
-    status: "active",
-    avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=John",
-    lastLogin: "2024-01-20 14:30",
-  },
-  {
-    id: 2,
-    name: "Jane Smith",
-    email: "jane@example.com",
-    role: "Admin",
-    status: "active",
-    avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Jane",
-    lastLogin: "2024-01-21 09:15",
-  },
-  {
-    id: 3,
-    name: "Robert Johnson",
-    email: "robert@example.com",
-    role: "Moderator",
-    status: "inactive",
-    avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Robert",
-    lastLogin: "2024-01-15 11:45",
-  },
-  {
-    id: 4,
-    name: "Sarah Williams",
-    email: "sarah@example.com",
-    role: "User",
-    status: "inactive",
-    avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Sarah",
-    lastLogin: "2024-01-18 16:20",
-  },
-  {
-    id: 5,
-    name: "Michael Brown",
-    email: "michael@example.com",
-    role: "Admin",
-    status: "active",
-    avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Michael",
-    lastLogin: "2024-01-22 10:00",
-  },
-];
+import fetchAllUsers from "../../controller/FetchAllUsers";
+import gravatarUrl from "../../utils/gravatarHelper";
 
 export default function UsersPage() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -78,6 +31,13 @@ export default function UsersPage() {
   const [selectedStatus, setSelectedStatus] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [mockUsers, setMockUsers] = useState([]);
+  const apiBase = import.meta.env.VITE_API_URL;
+  const [errors, setErrors] = useState({});
+
+  useEffect(() => {
+    fetchAllUsers(apiBase, setMockUsers, setErrors);
+  }, []);
 
   // Filter users based on search and filters
   const filteredUsers = mockUsers.filter((user) => {
@@ -360,10 +320,15 @@ export default function UsersPage() {
                       <div className="flex items-center gap-3">
                         <img
                           width={50}
-                          src={user.avatar}
+                          src={
+                            user.email
+                              ? gravatarUrl(user.email, 50)
+                              : "https://www.gravatar.com/avatar/?d=mp&s=50"
+                          }
                           alt={user.name}
                           className="w-10 h-10 rounded-full border border-gray-200"
                         />
+
                         <div>
                           <p className="font-medium text-gray-900">
                             {user.name}
