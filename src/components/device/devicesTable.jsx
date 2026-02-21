@@ -13,6 +13,8 @@ export default function DevicesTable() {
   const [currentPage, setCurrentPage] = useState(1);
   const rowsPerPage = 10;
 
+  const token = localStorage.getItem("token");
+
   // Fetch all devices
   const fetchDevices = async (page = 1) => {
     setLoading(true);
@@ -21,11 +23,10 @@ export default function DevicesTable() {
       await fetch(`${apiBase}/sanctum/csrf-cookie`, { credentials: "include" });
 
       const res = await fetch(`${apiBase}/api/all-devices?page=${page}`, {
-        credentials: "include",
         headers: {
           Accept: "application/json",
           "Content-Type": "application/json",
-          "X-XSRF-TOKEN": decodeURIComponent(Cookies.get("XSRF-TOKEN")),
+          Authorization: `Bearer ${token}`,
         },
       });
 
@@ -56,12 +57,11 @@ export default function DevicesTable() {
   const refreshDeviceStats = async (device) => {
     try {
       const res = await fetch(`${apiBase}/api/device-stats/${device.id}`, {
-        credentials: "include",
         method: "GET",
         headers: {
           Accept: "application/json",
           "Content-Type": "application/json",
-          "X-XSRF-TOKEN": decodeURIComponent(Cookies.get("XSRF-TOKEN")),
+          Authorization: `Bearer ${token}`,
         },
       });
 

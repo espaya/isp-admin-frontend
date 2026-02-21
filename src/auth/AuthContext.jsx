@@ -9,20 +9,34 @@ export const AuthProvider = ({ children }) => {
 
   const fetchUser = async () => {
     try {
+      const token = localStorage.getItem("token");
+
+      if (!token) {
+        setUser(null);
+        setLoading(false);
+        return;
+      }
+
       const res = await fetch(`${apiBase}/api/user`, {
-        credentials: "include",
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          Accept: "application/json",
+        },
       });
 
       if (res.ok) {
         const data = await res.json();
         setUser(data.user);
       } else {
+        // Token invalid or expired
+        localStorage.removeItem("token");
         setUser(null);
       }
-    } catch {
+    } catch (error) {
       setUser(null);
     } finally {
-      setLoading(false); // ✅ done loading
+      setLoading(false);
     }
   };
 

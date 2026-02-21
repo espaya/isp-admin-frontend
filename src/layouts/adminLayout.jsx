@@ -53,7 +53,7 @@ export default function AdminLayout() {
           style={{ backgroundImage: "url(/images/background/pattern-6.png)" }}
         />
         <div className="auto-container">
-          <h2>User Dashboard</h2>
+          <h2>Admin Dashboard</h2>
           <ul className="bread-crumb clearfix">
             <li>Home</li>
             <li>Dashboard</li>

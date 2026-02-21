@@ -1,6 +1,7 @@
 import { useContext, useState } from "react";
 import { AuthContext } from "../../auth/AuthContext";
 import { useNavigate, useLocation } from "react-router-dom";
+import Cookies from "js-cookie";
 
 export default function LoginForm() {
   const apiBase = import.meta.env.VITE_API_URL;
@@ -32,43 +33,31 @@ export default function LoginForm() {
     setError({});
 
     try {
-      // Get CSRF cookie
-      await fetch(`${apiBase}/sanctum/csrf-cookie`, {
-        method: "GET",
-        credentials: "include",
-      });
-
-      const getXsrfToken = () => {
-        const match = document.cookie
-          .split("; ")
-          .find((row) => row.startsWith("XSRF-TOKEN="));
-
-        return match ? decodeURIComponent(match.split("=")[1]) : "";
-      };
-
-      // Login request
       const response = await fetch(`${apiBase}/api/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Accept: "application/json",
-          "X-XSRF-TOKEN": getXsrfToken(),
         },
-        credentials: "include", // ✅ Important for Sanctum
         body: JSON.stringify(formData),
       });
 
       const data = await response.json();
 
       if (!response.ok) {
-        setError(data.errors || { general: data.message || "Login failed" });
+        setError({ general: data.message || "Login failed" });
         return;
       }
 
-      await fetchUser(); // Refresh user data after login
+      // ✅ Save token after successful login
+      localStorage.setItem("token", data.token);
 
-      // Redirect on success
-      navigate(from || data.redirect_url, { replace: true });
+      // Now fetch authenticated user
+      await fetchUser();
+
+      navigate(from || data.redirect_url || "/dashboard", {
+        replace: true,
+      });
     } catch (err) {
       setError({ general: "An error occurred. Please try again." });
     } finally {

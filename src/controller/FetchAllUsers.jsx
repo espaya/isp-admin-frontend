@@ -2,15 +2,14 @@ import Cookies from "js-cookie";
 
 const fetchAllUsers = async (apiBase, setMockUsers, setErrors) => {
   try {
-    await fetch(`${apiBase}/sanctum/csrf-cookie`, { credentials: "include" });
+    const token = localStorage.getItem("token");
 
     const response = await fetch(`${apiBase}/api/get-users/`, {
-      credentials: "include",
       method: "GET",
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json",
-        "X-XSRF-TOKEN": decodeURIComponent(Cookies.get("XSRF-TOKEN")),
+        Authorization: `Bearer ${token}`,
       },
     });
 

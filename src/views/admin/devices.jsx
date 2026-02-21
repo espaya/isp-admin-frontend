@@ -30,6 +30,7 @@ import {
 } from "lucide-react";
 import DevicesTable from "../../components/device/devicesTable";
 import Cookies from "js-cookie";
+import fetchAllDevices from "../../controller/FetchAllDevices";
 
 const apiBase = import.meta.env.VITE_API_URL;
 
@@ -37,6 +38,7 @@ export default function Devices() {
   const [devices, setDevices] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
+  const [errors, setErrors] = useState({});
   const [stats, setStats] = useState({
     total: 0,
     online: 0,
@@ -46,42 +48,16 @@ export default function Devices() {
     totalBandwidth: 0,
   });
   const [loading, setLoading] = useState(false);
-
-  // Fetch devices
-  const fetchDevices = async () => {
-    setLoading(true);
-    try {
-      await fetch(`${apiBase}/sanctum/csrf-cookie`, { credentials: "include" });
-
-      const res = await fetch(`${apiBase}/api/all-devices`, {
-        credentials: "include",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-          "X-XSRF-TOKEN": decodeURIComponent(Cookies.get("XSRF-TOKEN")),
-        },
-      });
-
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.message || "Failed to fetch devices");
-
-      setDevices(data.data || []);
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const token = localStorage.getItem("token");
 
   // Fetch card stats from backend
   const fetchStats = async () => {
     try {
       const res = await fetch(`${apiBase}/api/device-cards-stats`, {
-        credentials: "include",
         headers: {
           Accept: "application/json",
           "Content-Type": "application/json",
-          "X-XSRF-TOKEN": decodeURIComponent(Cookies.get("XSRF-TOKEN")),
+          Authorization: `Bearer ${token}`,
         },
       });
       const data = await res.json();
@@ -94,7 +70,7 @@ export default function Devices() {
   };
 
   useEffect(() => {
-    fetchDevices();
+    fetchAllDevices(setDevices, setLoading, setErrors, apiBase);
     fetchStats();
   }, []);
 

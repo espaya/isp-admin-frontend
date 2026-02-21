@@ -7,13 +7,15 @@ const fetchAllPackages = async (
   setPackages,
 ) => {
   try {
+
+    const token = localStorage.getItem("token")
+
     const response = await fetch(`${apiBase}/api/all-packages`, {
-      credentials: "include",
       method: "GET",
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json",
-        "X-XSRF-TOKEN": decodeURIComponent(Cookies.get("XSRF-TOKEN")),
+        Authorization: `Bearer ${token}`
       },
     });
 
