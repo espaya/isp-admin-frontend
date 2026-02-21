@@ -1,131 +1,60 @@
-import { useState } from "react";
-import {
-  CreditCard,
-  DollarSign,
-  Calendar,
-  CheckCircle,
-  Clock,
-  XCircle,
-  Download,
-  Filter,
-  Search,
-  MoreVertical,
-  Eye,
-  RefreshCw,
-  BarChart3,
-  TrendingUp,
-  Users,
-  Shield,
-  ArrowUpRight,
-  ArrowDownRight,
-} from "lucide-react";
-
-/* ------------------ DATA ------------------ */
-
-const paymentsData = [
-  {
-    id: 1,
-    user: "Alex Johnson",
-    email: "alex@example.com",
-    amount: 49.99,
-    package: "Monthly Elite",
-    date: "2026-01-25",
-    status: "completed",
-    method: "Credit Card",
-    transactionId: "TX-789456123",
-  },
-  {
-    id: 2,
-    user: "Sarah Williams",
-    email: "sarah@example.com",
-    amount: 19.99,
-    package: "Weekly Pro",
-    date: "2026-01-24",
-    status: "pending",
-    method: "PayPal",
-    transactionId: "TX-321654987",
-  },
-  {
-    id: 3,
-    user: "Michael Brown",
-    email: "michael@example.com",
-    amount: 149.99,
-    package: "Quarterly Business",
-    date: "2026-01-23",
-    status: "completed",
-    method: "Bank Transfer",
-    transactionId: "TX-654987321",
-  },
-  {
-    id: 4,
-    user: "Emma Davis",
-    email: "emma@example.com",
-    amount: 9.99,
-    package: "Daily Starter",
-    date: "2026-01-22",
-    status: "failed",
-    method: "Credit Card",
-    transactionId: "TX-987321654",
-  },
-];
-
-const stats = [
-  {
-    title: "Total Revenue",
-    value: "$12,450",
-    change: "+18.7%",
-    up: true,
-    gradient: "linear-gradient(135deg,#8b5cf6,#ec4899)",
-    icon: <DollarSign size={26} />,
-  },
-  {
-    title: "Completed",
-    value: "1,042",
-    change: "+12.5%",
-    up: true,
-    gradient: "linear-gradient(135deg,#10b981,#22c55e)",
-    icon: <CheckCircle size={26} />,
-  },
-  {
-    title: "Pending",
-    value: "24",
-    change: "-3.2%",
-    up: false,
-    gradient: "linear-gradient(135deg,#f59e0b,#f97316)",
-    icon: <Clock size={26} />,
-  },
-  {
-    title: "Failed",
-    value: "8",
-    change: "-15.4%",
-    up: false,
-    gradient: "linear-gradient(135deg,#ef4444,#f43f5e)",
-    icon: <XCircle size={26} />,
-  },
-];
-
-/* ------------------ HELPERS ------------------ */
-
-const statusBadge = (status) => {
-  if (status === "completed") return "bg-success-subtle text-success";
-  if (status === "pending") return "bg-warning-subtle text-warning";
-  return "bg-danger-subtle text-danger";
-};
-
-/* ------------------ COMPONENT ------------------ */
+import { useEffect, useState } from "react";
+import { CreditCard, Download, Search, Eye, RefreshCw } from "lucide-react";
+import fetchPayments from "../../controller/FetchPayments";
+import { formatAmount, formatDate } from "../../utils/formatters";
 
 export default function Payment() {
   const [search, setSearch] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState({});
+  const apiBase = import.meta.env.VITE_API_URL;
+  const [paymentsData, setPayments] = useState([]);
+  const [pagination, setPagination] = useState({
+    currentPage: 1,
+    lastPage: 1,
+    total: 0,
+  });
 
-  const filtered = paymentsData.filter(
-    (p) =>
-      p.user.toLowerCase().includes(search.toLowerCase()) ||
-      p.transactionId.toLowerCase().includes(search.toLowerCase()),
-  );
+  const filtered = paymentsData.filter((p) => {
+    const query = search.toLowerCase();
 
-  const totalRevenue = paymentsData
-    .filter((p) => p.status === "completed")
-    .reduce((sum, p) => sum + p.amount, 0);
+    return (
+      p?.reference?.toLowerCase().includes(query) ||
+      p?.status?.toLowerCase().includes(query) ||
+      String(p?.user_id).includes(query)
+    );
+  });
+
+  useEffect(() => {
+    fetchPayments(
+      setLoading,
+      setErrors,
+      apiBase,
+      setPayments,
+      1,
+      setPagination,
+    );
+  }, []);
+
+  const handleRefresh = () => {
+    setErrors({});
+
+    fetchPayments(
+      setLoading,
+      setErrors,
+      apiBase,
+      setPayments,
+      pagination.currentPage, // keep current page
+      setPagination,
+    );
+  };
+
+  const statusBadge = (status) => {
+    if (status === "success") return "bg-success-subtle text-success";
+    if (status === "pending") return "bg-warning-subtle text-warning";
+    if (status === "failed") return "bg-danger-subtle text-danger";
+    return "bg-secondary";
+  };
 
   return (
     <div
@@ -144,14 +73,21 @@ export default function Payment() {
             <h1 className="fw-bold mb-1 d-flex align-items-center gap-2">
               <CreditCard /> Payments
             </h1>
-            <p className="opacity-75 mb-0">
+            <p className="opacity-75 mb-0 text-white">
               Track revenue, transactions & payment performance
             </p>
           </div>
           <div className="d-flex gap-2">
-            <button className="btn btn-light fw-semibold">
-              <RefreshCw size={16} className="me-2" />
-              Refresh
+            <button
+              className="btn btn-light fw-semibold"
+              onClick={handleRefresh}
+              disabled={loading}
+            >
+              <RefreshCw
+                size={16}
+                className={`me-2 ${loading ? "spin" : ""}`}
+              />
+              {loading ? "Refreshing..." : "Refresh"}
             </button>
             <button className="btn btn-dark fw-semibold">
               <Download size={16} className="me-2" />
@@ -159,36 +95,6 @@ export default function Payment() {
             </button>
           </div>
         </div>
-      </div>
-
-      {/* STATS */}
-      <div className="row g-4 mb-5">
-        {stats.map((s, i) => (
-          <div key={i} className="col-lg-3 col-md-6">
-            <div
-              className="card border-0 shadow-lg text-white h-100"
-              style={{ background: s.gradient }}
-            >
-              <div className="card-body p-4">
-                <div className="d-flex justify-content-between mb-3">
-                  <div className="p-3 rounded-circle bg-white bg-opacity-25">
-                    {s.icon}
-                  </div>
-                  <span className="badge bg-white bg-opacity-25 px-3 py-2">
-                    {s.up ? (
-                      <ArrowUpRight size={14} />
-                    ) : (
-                      <ArrowDownRight size={14} />
-                    )}
-                    <span className="ms-1">{s.change}</span>
-                  </span>
-                </div>
-                <small className="opacity-75 text-uppercase">{s.title}</small>
-                <h2 className="fw-bold mt-2">{s.value}</h2>
-              </div>
-            </div>
-          </div>
-        ))}
       </div>
 
       {/* TABLE */}
@@ -223,27 +129,26 @@ export default function Payment() {
               </thead>
               <tbody>
                 {filtered.map((p) => (
-                  <tr key={p.id}>
+                  <tr key={p?.id}>
                     <td>
-                      <div className="fw-semibold">{p.user}</div>
-                      <small className="text-muted">{p.email}</small>
+                      <div className="fw-semibold">{p?.user?.name}</div>
+                      <small className="text-muted">{p?.reference}</small>
                     </td>
-                    <td>{p.package}</td>
-                    <td className="fw-bold">${p.amount.toFixed(2)}</td>
+                    <td>-</td>
+                    <td className="fw-bold">{formatAmount(p?.amount)}</td>
                     <td>
-                      <span className={`badge ${statusBadge(p.status)} px-3`}>
-                        {p.status}
+                      <span className={`badge ${statusBadge(p?.status)} px-3`}>
+                        {p?.status}
                       </span>
                     </td>
                     <td>
-                      <small className="text-muted">{p.date}</small>
+                      <small className="text-muted">
+                        {formatDate(p?.created_at)}
+                      </small>
                     </td>
                     <td className="text-end">
                       <button className="btn btn-sm btn-light">
                         <Eye size={14} />
-                      </button>
-                      <button className="btn btn-sm btn-light ms-2">
-                        <MoreVertical size={14} />
                       </button>
                     </td>
                   </tr>
@@ -251,47 +156,70 @@ export default function Payment() {
               </tbody>
             </table>
           </div>
-        </div>
-      </div>
 
-      {/* INSIGHTS */}
-      <div className="row g-4">
-        <div className="col-lg-4">
-          <div
-            className="p-4 rounded-4 text-white shadow"
-            style={{ background: "linear-gradient(135deg,#10b981,#22c55e)" }}
-          >
-            <h6>Total Processed</h6>
-            <h2 className="fw-bold">${totalRevenue.toLocaleString()}</h2>
-            <small className="opacity-75">
-              <TrendingUp size={14} /> +18.7% MoM
-            </small>
-          </div>
-        </div>
+          <div className="d-flex justify-content-between align-items-center mt-4">
+            <div>
+              Showing page {pagination.currentPage} of {pagination.lastPage}
+            </div>
 
-        <div className="col-lg-4">
-          <div
-            className="p-4 rounded-4 text-white shadow"
-            style={{ background: "linear-gradient(135deg,#3b82f6,#6366f1)" }}
-          >
-            <h6>Active Subscribers</h6>
-            <h2 className="fw-bold">1,245</h2>
-            <small className="opacity-75">
-              <Users size={14} /> currently active
-            </small>
-          </div>
-        </div>
+            <div className="d-flex gap-2">
+              <button
+                className="btn btn-sm btn-outline-primary"
+                disabled={pagination.currentPage === 1}
+                onClick={() =>
+                  fetchPayments(
+                    setLoading,
+                    setErrors,
+                    apiBase,
+                    setPayments,
+                    pagination.currentPage - 1,
+                    setPagination,
+                  )
+                }
+              >
+                Previous
+              </button>
 
-        <div className="col-lg-4">
-          <div
-            className="p-4 rounded-4 text-white shadow"
-            style={{ background: "linear-gradient(135deg,#f59e0b,#f97316)" }}
-          >
-            <h6>Security Score</h6>
-            <h2 className="fw-bold">100%</h2>
-            <small className="opacity-75">
-              <Shield size={14} /> fully compliant
-            </small>
+              {[...Array(pagination.lastPage)].map((_, i) => (
+                <button
+                  key={i}
+                  className={`btn btn-sm ${
+                    pagination.currentPage === i + 1
+                      ? "btn-primary"
+                      : "btn-outline-primary"
+                  }`}
+                  onClick={() =>
+                    fetchPayments(
+                      setLoading,
+                      setErrors,
+                      apiBase,
+                      setPayments,
+                      i + 1,
+                      setPagination,
+                    )
+                  }
+                >
+                  {i + 1}
+                </button>
+              ))}
+
+              <button
+                className="btn btn-sm btn-outline-primary"
+                disabled={pagination.currentPage === pagination.lastPage}
+                onClick={() =>
+                  fetchPayments(
+                    setLoading,
+                    setErrors,
+                    apiBase,
+                    setPayments,
+                    pagination.currentPage + 1,
+                    setPagination,
+                  )
+                }
+              >
+                Next
+              </button>
+            </div>
           </div>
         </div>
       </div>
