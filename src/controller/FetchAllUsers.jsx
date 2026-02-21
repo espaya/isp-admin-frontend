@@ -1,6 +1,5 @@
-import Cookies from "js-cookie";
-
-const fetchAllUsers = async (apiBase, setMockUsers, setErrors) => {
+const fetchAllUsers = async (apiBase, setMockUsers, setErrors, setLoading) => {
+  setLoading(true);
   try {
     const token = localStorage.getItem("token");
 
@@ -21,7 +20,11 @@ const fetchAllUsers = async (apiBase, setMockUsers, setErrors) => {
     }
 
     setMockUsers(data.data);
-  } catch (err) {}
+  } catch (err) {
+    setErrors({ general: err.message });
+  } finally {
+    setLoading(false);
+  }
 };
 
 export default fetchAllUsers;

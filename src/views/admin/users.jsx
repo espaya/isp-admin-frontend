@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link } from "lucide-react";
+import { Link, RefreshCw } from "lucide-react";
 import {
   Search,
   Filter,
@@ -34,9 +34,10 @@ export default function UsersPage() {
   const [mockUsers, setMockUsers] = useState([]);
   const apiBase = import.meta.env.VITE_API_URL;
   const [errors, setErrors] = useState({});
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchAllUsers(apiBase, setMockUsers, setErrors);
+    fetchAllUsers(apiBase, setMockUsers, setErrors, setLoading);
   }, []);
 
   // Filter users based on search and filters
@@ -82,6 +83,19 @@ export default function UsersPage() {
     }
   };
 
+  const handleRefresh = async () => {
+    setErrors({});
+    setLoading(true);
+
+    try {
+      await fetchAllUsers(apiBase, setMockUsers, setErrors, setLoading);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 p-4 md:p-6">
       <div className="max-w-7xl mx-auto">
@@ -99,18 +113,36 @@ export default function UsersPage() {
                 <h1 className="fw-bold d-flex align-items-center gap-2">
                   <Users /> Users
                 </h1>
-                <p className="opacity-75 mb-0">
+                <p className="opacity-75 mb- text-white">
                   Manage users, create, read, update & delete
                 </p>
               </div>
 
-              <a
-                to="/admin/dashboard/packages/add"
-                className="btn btn-dark fw-semibold"
-              >
-                <UserPlus size={16} className="me-2 text-white" />
-                Add User
-              </a>
+              <div className="d-flex gap-2 align-items-center">
+                {/* Refresh */}
+                <button
+                  className="btn btn-light fw-semibold d-flex align-items-center"
+                  onClick={handleRefresh}
+                  disabled={loading}
+                >
+                  <RefreshCw
+                    size={16}
+                    className={`me-2 ${loading ? "spin" : ""}`}
+                  />
+                  {loading ? "Refreshing..." : "Refresh"}
+                </button>
+
+                
+
+                {/* Add User */}
+                <a
+                  href="/admin/dashboard/users/add"
+                  className="btn btn-dark fw-semibold d-flex align-items-center"
+                >
+                  <UserPlus size={16} className="me-2" />
+                  Add User
+                </a>
+              </div>
             </div>
           </div>
 

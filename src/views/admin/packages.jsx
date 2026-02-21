@@ -12,6 +12,7 @@ import {
   LoaderCircleIcon,
   PowerOff,
   Laptop,
+  RefreshCw,
 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import fetchAllPackages from "../../controller/FetchAllPackages";
@@ -31,6 +32,19 @@ export default function Packages() {
   useEffect(() => {
     fetchAllPackages(setLoading, apiBase, setErrors, setPackages);
   }, []);
+
+  const handleRefresh = async () => {
+    setErrors({});
+    setLoading(true);
+
+    try {
+      await fetchAllPackages(setLoading, apiBase, setErrors, setPackages);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   /* ================= STATS ================= */
   const totalPackages = packages.length;
@@ -159,12 +173,23 @@ export default function Packages() {
               Manage pricing, validity & availability
             </p>
           </div>
-          <Link to="/admin/dashboard/packages/add">
-            <button className="btn btn-dark fw-semibold">
-              <Plus size={16} className="me-2" />
-              Add Package
+          <div className="d-flex gap-2">
+            <button
+              className="btn btn-light fw-semibold d-flex align-items-center gap-1"
+              onClick={handleRefresh}
+              disabled={loading}
+            >
+              <RefreshCw size={16} className={loading ? "spin" : ""} />
+              {loading ? "Refreshing..." : "Refresh"}
             </button>
-          </Link>
+
+            <Link to="/admin/dashboard/packages/add">
+              <button className="btn btn-dark fw-semibold">
+                <Plus size={16} className="me-2" />
+                Add Package
+              </button>
+            </Link>
+          </div>
         </div>
       </div>
 

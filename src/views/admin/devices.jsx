@@ -74,6 +74,22 @@ export default function Devices() {
     fetchStats();
   }, []);
 
+  const handleRefresh = async () => {
+    setLoading(true);
+    setErrors({});
+
+    try {
+      await Promise.all([
+        fetchAllDevices(setDevices, setLoading, setErrors, apiBase),
+        fetchStats(),
+      ]);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const filteredDevices = devices.filter((device) => {
     const matchesSearch =
       device.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -105,12 +121,11 @@ export default function Devices() {
           <div className="d-flex gap-2">
             <button
               className="btn btn-light fw-semibold d-flex align-items-center gap-1"
-              onClick={() => {
-                fetchDevices();
-                fetchStats();
-              }}
+              onClick={handleRefresh}
+              disabled={loading}
             >
-              <RefreshCw size={16} /> Refresh All
+              <RefreshCw size={16} className={loading ? "spin" : ""} />
+              {loading ? "Refreshing..." : "Refresh All"}
             </button>
             <Link
               to="/admin/dashboard/devices/add"

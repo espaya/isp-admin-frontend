@@ -41,8 +41,6 @@ export default function AdminLayout() {
 
   return (
     <div className="page-wrapper">
-      {/* <Header /> */}
-
       {/* Page Title */}
       <section
         className="page-title_two"
@@ -88,24 +86,20 @@ export default function AdminLayout() {
                 {/* MENU */}
                 <ul className="list-group list-group-flush">
                   {menuItems.map((item) => (
-                    <li
-                      key={item.path}
-                      className={`list-group-item border-0 rounded-3 mb-1 ${
-                        location.pathname === item.path
-                          ? "text-white"
-                          : "text-dark"
-                      }`}
-                      style={{
-                        background:
-                          location.pathname === item.path
-                            ? "linear-gradient(135deg,#6366f1,#8b5cf6,#ec4899)"
-                            : "transparent",
-                        cursor: "pointer",
-                      }}
-                    >
+                    <li key={item.path} className="border-0 rounded-3 mb-1 p-0">
                       <NavLink
                         to={item.path}
-                        className="d-flex align-items-center text-decoration-none"
+                        end={item.path === "/admin/dashboard"} // 👈 add this
+                        className={({ isActive }) =>
+                          `list-group-item border-0 rounded-3 mb-1 d-flex align-items-center text-decoration-none ${
+                            isActive ? "text-white" : "text-dark"
+                          }`
+                        }
+                        style={({ isActive }) => ({
+                          background: isActive
+                            ? "linear-gradient(135deg,#6366f1,#8b5cf6,#ec4899)"
+                            : "transparent",
+                        })}
                       >
                         <i className={`${item.icon} me-2`}></i>
                         {item.label}
