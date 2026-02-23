@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import Cookies from "js-cookie";
 import { Plus } from "lucide-react";
 import { useParams, useNavigate } from "react-router-dom";
 import fetchSinglePackage from "../../controller/FetchSinglePackage";
@@ -24,6 +23,8 @@ export default function AddPackages() {
     type: "",
   });
 
+  const token = localStorage.getItem("token");
+
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     setFormData({
@@ -39,15 +40,12 @@ export default function AddPackages() {
     setLoading(true);
 
     try {
-      const token = localStorage.getItem("token");
-
       const endpoint = id
         ? `${apiBase}/api/update-package/${id}`
         : `${apiBase}/api/add-package`;
       const method = id ? "PUT" : "POST";
 
       const response = await fetch(endpoint, {
-        credentials: "include",
         method,
         body: JSON.stringify(formData),
         headers: {

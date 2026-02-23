@@ -26,6 +26,8 @@ export default function Packages() {
   const [errors, setErrors] = useState({});
   const [toggleLoadingIds, setToggleLoadingIds] = useState([]);
 
+  const token = localStorage.getItem("token")
+
   const apiBase = import.meta.env.VITE_API_URL;
   const navigate = useNavigate();
 
@@ -64,15 +66,13 @@ export default function Packages() {
     setToggleLoadingIds((prev) => [...prev, pkg.id]);
 
     try {
-      await fetch(`${apiBase}/sanctum/csrf-cookie`, { credentials: "include" });
 
       const response = await fetch(`${apiBase}/api/packages/${pkg.id}/toggle`, {
         method: "PATCH",
-        credentials: "include",
         headers: {
           "Content-Type": "application/json",
           Accept: "application/json",
-          "X-XSRF-TOKEN": decodeURIComponent(Cookies.get("XSRF-TOKEN")),
+          Authorization: `Bearer ${token}`
         },
         body: JSON.stringify({ isActive: !pkg.isActive }),
       });
@@ -119,12 +119,12 @@ export default function Packages() {
 
       if (deletePackge.isConfirmed) {
         const response = await fetch(`${apiBase}/api/delete-package/${id}`, {
-          credentials: "include",
+      
           method: "DELETE",
           headers: {
             Accept: "application/json",
             "Content-Type": "application/json",
-            "X-XSRF-TOKEN": decodeURIComponent(Cookies.get("XSRF-TOKEN")),
+            Authorization: `Bearer ${token}`
           },
         });
 
@@ -169,7 +169,7 @@ export default function Packages() {
             <h1 className="fw-bold d-flex align-items-center gap-2">
               <Wifi /> Internet Packages
             </h1>
-            <p className="opacity-75 mb-0">
+            <p className="opacity-75 mb-0 text-white">
               Manage pricing, validity & availability
             </p>
           </div>

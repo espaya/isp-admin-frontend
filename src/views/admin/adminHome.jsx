@@ -102,7 +102,7 @@ export default function AdminHome() {
         <div className="d-flex justify-content-between align-items-center">
           <div>
             <h1 className="fw-bold mb-1">Dashboard Overview</h1>
-            <p className="opacity-75 mb-0">
+            <p className="opacity-75 mb-0 text-white">
               Welcome back — here’s a snapshot of your business.
             </p>
           </div>

@@ -14,7 +14,6 @@ const fetchSinglePackage = async (
     const token = localStorage.getItem("token")
 
     const response = await fetch(`${apiBase}/api/single-package/${id}`, {
-      credentials: "include",
       method: "GET",
       headers: {
         Accept: "application/json",

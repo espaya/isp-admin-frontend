@@ -8,24 +8,17 @@ const useLogout = () => {
   const apiBase = import.meta.env.VITE_API_URL;
   const navigate = useNavigate();
 
+  const token = localStorage.getItem("token");
+
   const logout = async () => {
     try {
-      // 1. Get CSRF cookie (required for Sanctum)
-      await fetch(`${apiBase}/sanctum/csrf-cookie`, {
-        credentials: "include",
-      });
-
-      // Optional: manually get token if needed
-      const csrfToken = Cookies.get("XSRF-TOKEN");
-
       // 2. Call Laravel logout
       const res = await fetch(`${apiBase}/api/logout`, {
         method: "POST",
-        credentials: "include",
         headers: {
           "Content-Type": "application/json",
           Accept: "application/json",
-          "X-XSRF-TOKEN": csrfToken ? decodeURIComponent(csrfToken) : "",
+          Authorization: `Bearer ${token}`,
         },
       });
 

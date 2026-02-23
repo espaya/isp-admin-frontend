@@ -4,6 +4,7 @@ import Footer from "../components/Footer";
 import { useContext } from "react";
 import { AuthContext } from "../auth/AuthContext";
 import useLogout from "../auth/logout";
+import Avatar from "../components/Avatar";
 
 export default function AdminLayout() {
   const location = useLocation();
@@ -68,19 +69,11 @@ export default function AdminLayout() {
               <div className="card shadow-sm rounded-4 p-3 h-100">
                 {/* PROFILE */}
                 <div className="text-center mb-4">
-                  <img
-                    src="/images/avatar.png"
-                    className="rounded-circle mb-2 border border-3 border-primary"
-                    style={{ width: 90, height: 90 }}
-                  />
+                  <Avatar />
                   <h5 className="fw-bold mt-2">{user?.name || "Guest"}</h5>
                   <small className="text-muted d-block mb-2">
-                    +233 55 000 0000
+                    {user?.email || "N/A"}
                   </small>
-
-                  <span className="badge bg-gradient-success text-white px-3 py-2 rounded-pill">
-                    <i className="fas fa-wifi me-1"></i> Connected
-                  </span>
                 </div>
 
                 {/* MENU */}

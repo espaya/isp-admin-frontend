@@ -26,6 +26,8 @@ export default function AddDevice() {
     });
   };
 
+  const token = localStorage.getItem("token");
+
   const submitForm = async (e) => {
     e.preventDefault();
     setErrors({});
@@ -33,18 +35,13 @@ export default function AddDevice() {
     setLoading(true);
 
     try {
-      await fetch(`${apiBase}/sanctum/csrf-cookie`, {
-        credentials: "include",
-      });
-
       const response = await fetch(`${apiBase}/api/add-device`, {
-        credentials: "include",
         method: "POST",
         body: JSON.stringify(formData),
         headers: {
           Accept: "application/json",
           "Content-Type": "application/json",
-          "X-XSRF-TOKEN": decodeURIComponent(Cookies.get("XSRF-TOKEN")),
+          Authorization: `Bearer ${token}`,
         },
       });
 
@@ -228,7 +225,7 @@ export default function AddDevice() {
                   Cancel
                 </button>
                 <button
-                disabled={loading}
+                  disabled={loading}
                   type="submit"
                   className="btn btn-primary"
                   style={{

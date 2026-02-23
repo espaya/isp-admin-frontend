@@ -20,8 +20,6 @@ export default function DevicesTable() {
     setLoading(true);
     setErrors({});
     try {
-      await fetch(`${apiBase}/sanctum/csrf-cookie`, { credentials: "include" });
-
       const res = await fetch(`${apiBase}/api/all-devices?page=${page}`, {
         headers: {
           Accept: "application/json",

@@ -114,7 +114,7 @@ export default function Devices() {
             <h1 className="fw-bold mb-1 d-flex align-items-center gap-2">
               <Server /> Network Devices
             </h1>
-            <p className="opacity-75 mb-0">
+            <p className="opacity-75 mb-0 text-white">
               Monitor and manage all network infrastructure devices
             </p>
           </div>
