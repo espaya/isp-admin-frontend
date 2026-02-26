@@ -1,41 +1,41 @@
 import { useContext } from "react";
 import { AuthContext } from "./AuthContext";
 import { useNavigate } from "react-router-dom";
-import Cookies from "js-cookie"; // make sure js-cookie is installed
 
 const useLogout = () => {
-  const { setUser, fetchUser } = useContext(AuthContext);
+  const { setUser } = useContext(AuthContext);
   const apiBase = import.meta.env.VITE_API_URL;
   const navigate = useNavigate();
 
-  const token = localStorage.getItem("token");
-
   const logout = async () => {
     try {
-      // 2. Call Laravel logout
-      const res = await fetch(`${apiBase}/api/logout`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const token = localStorage.getItem("token");
 
-      if (!res.ok) {
-        throw new Error("Logout failed");
+      if (token) {
+        await fetch(`${apiBase}/api/logout`, {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            Accept: "application/json",
+          },
+        });
       }
 
-      // 3. Refresh user context
-      await fetchUser();
+      // 🔥 Remove token
+      localStorage.removeItem("token");
 
-      // 4. Navigate to login page
-      navigate("/", { replace: true });
-
-      // 5. Clear local user state
+      // 🔥 Clear user context
       setUser(null);
+
+      // 🔥 Redirect
+      navigate("/login", { replace: true });
     } catch (err) {
       console.error("Logout failed", err);
+
+      // Even if API fails, clear client
+      localStorage.removeItem("token");
+      setUser(null);
+      navigate("/login", { replace: true });
     }
   };
 

@@ -65,7 +65,7 @@ export default function AdminLayout() {
         <div className="auto-container">
           <div className="row clearfix">
             {/* SIDEBAR */}
-            <div className="col-lg-3 col-md-12 mb-4">
+            <div className="col-lg-3 col-md-12 mb-4 align-self-start">
               <div className="card shadow-sm rounded-4 p-3 h-100">
                 {/* PROFILE */}
                 <div className="text-center mb-4">
