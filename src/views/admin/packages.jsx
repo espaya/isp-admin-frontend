@@ -17,7 +17,6 @@ import {
 import { Link, useNavigate } from "react-router-dom";
 import fetchAllPackages from "../../controller/FetchAllPackages";
 import Swal from "sweetalert2";
-import Cookies from "js-cookie";
 
 export default function Packages() {
   const [packages, setPackages] = useState([]);

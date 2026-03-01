@@ -24,6 +24,8 @@ import {
 } from "lucide-react";
 import fetchAllUsers from "../../controller/FetchAllUsers";
 import gravatarUrl from "../../utils/gravatarHelper";
+import Swal from "sweetalert2";
+import { capitalize } from "../../utils/formatters";
 
 export default function UsersPage() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -35,9 +37,14 @@ export default function UsersPage() {
   const apiBase = import.meta.env.VITE_API_URL;
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(true);
+  const token = localStorage.getItem("token");
+
+  const loadUsers = async () => {
+    fetchAllUsers(apiBase, setMockUsers, setErrors, setLoading);
+  };
 
   useEffect(() => {
-    fetchAllUsers(apiBase, setMockUsers, setErrors, setLoading);
+    loadUsers();
   }, []);
 
   // Filter users based on search and filters
@@ -96,6 +103,63 @@ export default function UsersPage() {
     }
   };
 
+  const deleteUser = async (user) => {
+    const prompt = await Swal.fire({
+      icon: "question",
+      title: "Proceed?",
+      text: `Are you sure you want to delete ${capitalize(user.name)}?`,
+      confirmButtonText: "Yes, Delete",
+      confirmButtonColor: "red",
+      showCancelButton: true,
+      cancelButtonText: "No, Cancel",
+      cancelButtonColor: "green",
+    });
+
+    if (!prompt.isConfirmed) return;
+
+    try {
+      Swal.fire({
+        title: "Deleting...",
+        allowOutsideClick: false,
+        didOpen: () => Swal.showLoading(),
+      });
+
+      const res = await fetch(`${apiBase}/api/users/delete/${user.id}`, {
+        method: "DELETE",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const data = await res.json().catch(() => ({}));
+
+      if (!res.ok) {
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: res.message,
+        });
+        return;
+      }
+
+      await loadUsers();
+
+      Swal.fire({
+        icon: "success",
+        title: "Success",
+        text: data.message || "User deleted successfully",
+      });
+    } catch (err) {
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: err.message,
+      });
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 p-4 md:p-6">
       <div className="max-w-7xl mx-auto">
@@ -131,8 +195,6 @@ export default function UsersPage() {
                   />
                   {loading ? "Refreshing..." : "Refresh"}
                 </button>
-
-                
 
                 {/* Add User */}
                 <a
@@ -387,9 +449,10 @@ export default function UsersPage() {
                         {user.status === "active" && (
                           <CheckCircle className="w-3 h-3 mr-1 text-success" />
                         )}
-                        {user.status === "inactive" && (
-                          <XCircle className="w-3 h-3 mr-1 text-danger" />
-                        )}
+                        {user.status === "inactive" ||
+                          (user.status === "suspended" && (
+                            <XCircle className="w-3 h-3 mr-1 text-danger" />
+                          ))}
                       </span>
                     </td>
                     <td className="p-4 text-sm text-gray-600">
@@ -397,24 +460,24 @@ export default function UsersPage() {
                     </td>
                     <td className="p-4">
                       <div className="flex items-center gap-2">
-                        <button
+                        <a
+                          href={`users/${user.id}`}
                           className="p-2 text-gray-600 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
                           title="View"
                         >
                           <Eye className="w-4 h-4" />
-                        </button>
-                        <button
-                          className="p-2 text-gray-600 hover:text-emerald-600 hover:bg-emerald-50 rounded-lg transition-colors"
-                          title="Edit"
-                        >
-                          <Edit2 className="w-4 h-4" />
-                        </button>
-                        <button
-                          className="p-2 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                          title="Delete"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
+                        </a>
+
+                        {user.role === "user" && (
+                          <button
+                            onClick={() => deleteUser(user)}
+                            className="p-2 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                            title="Delete"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        )}
+
                         <button
                           className="p-2 text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-lg transition-colors"
                           title="More options"
@@ -446,7 +509,6 @@ export default function UsersPage() {
           )}
 
           {/* Table Footer */}
-
           <div className="px-4 py-3 border-top bg-light">
             <div className="row align-items-center g-3">
               {/* Results Info */}

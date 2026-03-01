@@ -21,3 +21,6 @@ export const formatDate = (date, type = "short") => {
 
   return parsed.toLocaleDateString("en-GH", options);
 };
+
+export const capitalize = (text = "") =>
+  text.replace(/\b\w/g, (char) => char.toUpperCase());
