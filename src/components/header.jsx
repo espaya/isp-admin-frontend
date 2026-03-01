@@ -15,7 +15,7 @@ export default function Header() {
               <div className="logo-box d-flex align-items-center">
                 <div className="logo">
                   <Link to="/">
-                    <img src="images/logo.png" alt="" title="" />
+                    <img src="/images/logo.png" alt="" title="" />
                   </Link>
                 </div>
               </div>
@@ -114,7 +114,7 @@ export default function Header() {
                   <div className="header-phone_box-inner">
                     <div className="header-phone_box-icon flaticon-consulting" />
                     Help line <br />
-                    <a href="tel:+66-7800-3202">+66(7800) 3202</a>
+                    <a href="+233542833341">+233 (0) 54 283 3341</a>
                   </div>
                 </div>
                 {/* Mobile Navigation Toggler */}
@@ -138,7 +138,7 @@ export default function Header() {
           <nav className="menu-box">
             <div className="nav-logo">
               <Link to="/">
-                <img src="images/logo.png" alt="" title="" />
+                <img src="/images/logo.png" alt="" title="" />
               </Link>
             </div>
             {/* Search */}
