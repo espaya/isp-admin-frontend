@@ -1,7 +1,7 @@
 import { useContext } from "react";
 import { AuthContext } from "../auth/AuthContext";
 import { Navigate } from "react-router-dom";
-import Spinner from "../components/Spinner";
+import Spinner from "../components/spinner";
 
 export default function GuestRoute({ children }) {
   const { user, loading } = useContext(AuthContext);
