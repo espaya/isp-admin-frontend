@@ -1,7 +1,7 @@
 import { useContext } from "react";
 import { AuthContext } from "../auth/AuthContext";
 import { Navigate, useLocation } from "react-router-dom";
-import Spinner from "../components/Spinner";
+import Spinner from "../components/spinner";
 
 export default function ProtectedRoute({ children, roles = [] }) {
   const { user, loading } = useContext(AuthContext);
