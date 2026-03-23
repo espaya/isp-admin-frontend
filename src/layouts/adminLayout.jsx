@@ -1,6 +1,6 @@
 import { Outlet, NavLink, useLocation } from "react-router-dom";
 import Header from "../components/header";
-import Footer from "../components/Footer";
+import Footer from "../components/footer";
 import { useContext } from "react";
 import { AuthContext } from "../auth/AuthContext";
 import useLogout from "../auth/logout";
