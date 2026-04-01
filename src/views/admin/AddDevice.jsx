@@ -102,7 +102,7 @@ export default function AddDevice() {
           )}
           {successMsg && (
             <p className="alert alert-success text-center">
-              hey there {successMsg}
+              {successMsg}
             </p>
           )}
           <form method="POST" onSubmit={submitForm}>
