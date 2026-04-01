@@ -16,6 +16,8 @@ export default function AddDevice() {
     description: "",
     snmpCommunity: "",
     monitorEnabled: false,
+    api_user: "",
+    api_password: "",
   });
 
   const handleChange = (e) => {
@@ -61,6 +63,8 @@ export default function AddDevice() {
         description: "",
         snmpCommunity: "",
         monitorEnabled: false,
+        api_user: "",
+        api_password: "",
       });
     } catch (err) {
       setErrors({ general: err.message });
@@ -167,6 +171,39 @@ export default function AddDevice() {
                     <small className="text-danger"> {errors?.model[0]} </small>
                   )}
                 </div>
+
+                <div className="col-md-6">
+                  <label className="form-label fw-semibold">API User</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    placeholder="e.g admin"
+                    name="api_user"
+                    value={formData.api_user}
+                    onChange={handleChange}
+                  />
+                  {errors?.api_user && (
+                    <small className="text-danger">{errors?.api_user[0]}</small>
+                  )}
+                </div>
+
+                <div className="col-md-6">
+                  <label className="form-label fw-semibold">API Password</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    placeholder=""
+                    name="api_password"
+                    value={formData.api_password}
+                    onChange={handleChange}
+                  />
+                  {errors?.api_password && (
+                    <small className="text-danger">
+                      {errors?.api_password[0]}
+                    </small>
+                  )}
+                </div>
+
                 <div className="col-md-12">
                   <label className="form-label fw-semibold">Description</label>
                   <textarea
