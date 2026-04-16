@@ -52,7 +52,7 @@ export const ROUTE_CONFIG = {
       { path: "devices", element: <Devices /> },
       { path: "devices/add", element: <AddDevice /> },
        { path: "devices/edit/:id", element: <EditDevice /> },
-      { path: "devices/device_name", element: <SingleDevice /> },
+      { path: "devices/:device_name", element: <SingleDevice /> },
       { path: "settings", element: <Settings /> },
       {path: ""}
     ],

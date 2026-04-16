@@ -221,7 +221,7 @@ export default function DevicesTable() {
                     </a>
                     <a
                       className="btn btn-sm btn-light me-1"
-                     href={`/admin/dashboard/devices/${device.id}`}
+                     href={`/admin/dashboard/devices/edit/${device.id}`}
                     >
                       <Edit size={14} />
                     </a>
