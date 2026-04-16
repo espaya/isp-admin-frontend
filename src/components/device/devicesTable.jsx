@@ -213,18 +213,18 @@ export default function DevicesTable() {
                   </td>
 
                   <td className="text-end">
-                    <Link
+                    <button
                       className="btn btn-sm btn-light me-1"
-                     to={`/devices/${device.name}`}
+                     onClick={() => `/devices/${device.name}`}
                     >
                       <Eye size={14} />
-                    </Link>
-                    <Link
+                    </button>
+                    <button
                       className="btn btn-sm btn-light me-1"
-                     to={`/devices/${device.id}`}
+                     onClick={() => `/devices/${device.id}`}
                     >
                       <Edit size={14} />
-                    </Link>
+                    </button>
                     <button
                       className="btn btn-sm btn-light me-1"
                       onClick={() => refreshDeviceStats(device)}
