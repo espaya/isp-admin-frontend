@@ -51,7 +51,7 @@ export const ROUTE_CONFIG = {
       { path: "payments", element: <Payment /> },
       { path: "devices", element: <Devices /> },
       { path: "devices/add", element: <AddDevice /> },
-       { path: "devices/:id", element: <EditDevice /> },
+       { path: "devices/edit/:id", element: <EditDevice /> },
       { path: "devices/device_name", element: <SingleDevice /> },
       { path: "settings", element: <Settings /> },
       {path: ""}
