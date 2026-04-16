@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Wifi, RefreshCw, XCircle, CheckCircle } from "lucide-react";
+import { Wifi, RefreshCw, XCircle, CheckCircle, Link } from "lucide-react";
 import Cookies from "js-cookie";
 
 export default function DevicesTable() {
@@ -213,6 +213,12 @@ export default function DevicesTable() {
                   </td>
 
                   <td className="text-end">
+                    <Link
+                      className="btn btn-sm btn-light me-1"
+                     to={`/devices/${device.name}`}
+                    >
+                      <RefreshCw size={14} />
+                    </Link>
                     <button
                       className="btn btn-sm btn-light me-1"
                       onClick={() => refreshDeviceStats(device)}
