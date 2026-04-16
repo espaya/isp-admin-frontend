@@ -215,13 +215,13 @@ export default function DevicesTable() {
                   <td className="text-end">
                     <a
                       className="btn btn-sm btn-light me-1"
-                     href={`/devices/${device.name}`}
+                     href={`/admin/dashboard/devices/${device.name}`}
                     >
                       <Eye size={14} />
                     </a>
                     <a
                       className="btn btn-sm btn-light me-1"
-                     href={`/devices/${device.id}`}
+                     href={`/admin/dashboard/devices/${device.id}`}
                     >
                       <Edit size={14} />
                     </a>
