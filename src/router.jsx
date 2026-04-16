@@ -14,6 +14,7 @@ import AddDevice from "./views/admin/AddDevice";
 import SingleDevice from "./views/admin/SingleDevice";
 import AddPackages from "./views/admin/AddPackages";
 import SingleUser from "./views/admin/SingleUser";
+import EditDevice from "./views/admin/EditDevice";
 
 export const ROUTE_CONFIG = {
   LANDING: {
@@ -50,6 +51,7 @@ export const ROUTE_CONFIG = {
       { path: "payments", element: <Payment /> },
       { path: "devices", element: <Devices /> },
       { path: "devices/add", element: <AddDevice /> },
+       { path: "devices/:id", element: <EditDevice /> },
       { path: "devices/device_name", element: <SingleDevice /> },
       { path: "settings", element: <Settings /> },
       {path: ""}
