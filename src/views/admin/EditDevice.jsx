@@ -74,6 +74,7 @@ export default function EditDevice() {
   const fetchDevice = async () => {
     try {
       const res = await fetch(`${apiBase}/api/devices/${id}`, {
+        method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,
         },
