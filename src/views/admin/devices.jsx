@@ -53,7 +53,7 @@ export default function Devices() {
   // Fetch card stats from backend
   const fetchStats = async () => {
     try {
-      const res = await fetch(`${apiBase}/api/device-cards-stats`, {
+      const res = await fetch(`/api/device-cards-stats`, {
         headers: {
           Accept: "application/json",
           "Content-Type": "application/json",
