@@ -44,7 +44,7 @@ export default function EditDevice() {
     setLoading(true);
 
     try {
-      const response = await fetch(`${apiBase}/api/device/${id}`, {
+      const response = await fetch(`${apiBase}/api/devices/${id}`, {
         method: "POST",
         body: JSON.stringify(formData),
         headers: {
@@ -73,7 +73,7 @@ export default function EditDevice() {
   useEffect(() => {
   const fetchDevice = async () => {
     try {
-      const res = await fetch(`${apiBase}/api/devices/${id}`, {
+      const res = await fetch(`${apiBase}/api/device/${id}`, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,
