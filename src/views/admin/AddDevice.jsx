@@ -37,7 +37,7 @@ export default function AddDevice() {
     setLoading(true);
 
     try {
-      const response = await fetch(`${apiBase}/api/add-device`, {
+      const response = await fetch(`/api/add-device`, {
         method: "POST",
         body: JSON.stringify(formData),
         headers: {
