@@ -1,6 +1,16 @@
 import { useState, useEffect } from "react";
-import { Wifi, RefreshCw, XCircle, CheckCircle, Link, Edit, Eye } from "lucide-react";
+import {
+  Wifi,
+  RefreshCw,
+  XCircle,
+  CheckCircle,
+  Link,
+  Edit,
+  Eye,
+  Trash2,
+} from "lucide-react";
 import Cookies from "js-cookie";
+import Swal from "sweetalert2";
 
 export default function DevicesTable() {
   const [devices, setDevices] = useState([]);
@@ -131,6 +141,47 @@ export default function DevicesTable() {
   const totalPages = Math.ceil(filteredDevices.length / rowsPerPage);
   const paginate = (page) => setCurrentPage(page);
 
+  const deleteDevice = async (deviceId) => {
+    const result = await Swal.fire({
+      title: "Are you sure?",
+      text: "This action cannot be undone.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Yes, delete it!",
+    });
+
+    if (result.isConfirmed) {
+      try {
+        const response = await fetch(
+          `${apiBase}/api/device/delete/${deviceId}`,
+          {
+            method: "DELETE",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          },
+        );
+
+        if (!response.ok) {
+          const data = await response.json();
+          Swal.fire(
+            "Error!",
+            data.message || "Failed to delete device.",
+            "error",
+          );
+          return;
+        }
+
+        // Remove the device from the list
+        setDevices((prev) => prev.filter((d) => d.id !== deviceId));
+        Swal.fire("Deleted!", "The device has been deleted.", "success");
+      } catch (err) {
+        Swal.fire("Error!", err.message, "error");
+      }
+    }
+  };
+
   return (
     <>
       {errors.general && <p className="alert alert-danger">{errors.general}</p>}
@@ -213,18 +264,18 @@ export default function DevicesTable() {
                   </td>
 
                   <td className="text-end">
-                    <a
+                    <Link
                       className="btn btn-sm btn-light me-1"
-                     href={`/admin/dashboard/devices/${device.name}`}
+                      to={`/admin/dashboard/devices/${device.name}`}
                     >
                       <Eye size={14} />
-                    </a>
-                    <a
+                    </Link>
+                    <Link
                       className="btn btn-sm btn-light me-1"
-                     href={`/admin/dashboard/devices/edit/${device.id}`}
+                      to={`/admin/dashboard/devices/edit/${device.id}`}
                     >
                       <Edit size={14} />
-                    </a>
+                    </Link>
                     <button
                       className="btn btn-sm btn-light me-1"
                       onClick={() => refreshDeviceStats(device)}
@@ -247,6 +298,12 @@ export default function DevicesTable() {
                         <CheckCircle size={14} className="text-success" />
                       )}
                     </button>
+                    <Button
+                      className="btn btn-sm btn-light"
+                      onClick={() => deleteDevice(device.id)}
+                    >
+                      <Trash2 size={14} />
+                    </Button>
                   </td>
                 </tr>
               ))}

@@ -1,9 +1,18 @@
 import { useEffect, useState } from "react";
-import { CreditCard, Download, Search, Eye, RefreshCw } from "lucide-react";
+import {
+  CreditCard,
+  Download,
+  Search,
+  Eye,
+  RefreshCw,
+  Trash2,
+} from "lucide-react";
 import fetchPayments from "../../controller/FetchPayments";
 import { formatAmount, formatDate } from "../../utils/formatters";
+import Swal from "sweetalert2";
 
 export default function Payment() {
+  const token = localStorage.getItem("token");
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
@@ -55,6 +64,43 @@ export default function Payment() {
     if (status === "failed") return "bg-danger-subtle text-danger";
     return "bg-secondary";
   };
+
+  const deletePayment = async (paymentId) => {
+  const result = await Swal.fire({
+    title: "Are you sure?",
+    text: "This action cannot be undone.",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonText: "Yes, delete it!",
+  });
+
+  if (result.isConfirmed) {
+    try {
+      const response = await fetch(`${apiBase}/payments/${paymentId}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        Swal.fire("Error!", data.message || "Failed to delete payment.", "error");
+        return;
+      }
+
+      Swal.fire("Deleted!", "The payment has been deleted.", "success");
+      
+      // Refresh the payments list
+      fetchPayments();
+      
+    } catch (err) {
+      Swal.fire("Error!", "An error occurred while deleting the payment.", "error");
+    }
+  }
+};
 
   return (
     <div
@@ -149,6 +195,12 @@ export default function Payment() {
                     <td className="text-end">
                       <button className="btn btn-sm btn-light">
                         <Eye size={14} />
+                      </button>
+                      <button
+                        onClick={() => deletePayment(p?.id)}
+                        className="btn btn-sm btn-light"
+                      >
+                        <Trash2 size={14} />
                       </button>
                     </td>
                   </tr>
