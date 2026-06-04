@@ -298,12 +298,12 @@ export default function DevicesTable() {
                         <CheckCircle size={14} className="text-success" />
                       )}
                     </button>
-                    <Button
+                    <button
                       className="btn btn-sm btn-light"
                       onClick={() => deleteDevice(device.id)}
                     >
                       <Trash2 size={14} />
-                    </Button>
+                    </button>
                   </td>
                 </tr>
               ))}
