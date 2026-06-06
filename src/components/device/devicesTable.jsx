@@ -112,7 +112,7 @@ export default function DevicesTable() {
   // Refresh single device stats
   const refreshDeviceStats = async (device) => {
     try {
-      const res = await fetch(`${apiBase}/api/device/stats/${device.id}`, {
+      const res = await fetch(`${apiBase}/api/device-stats/${device.id}`, {
         headers: {
           Accept: "application/json",
           Authorization: `Bearer ${token}`,
