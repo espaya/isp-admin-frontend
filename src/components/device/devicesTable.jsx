@@ -259,18 +259,18 @@ export default function DevicesTable() {
                         ↓ {device.bandwidth?.download || "-"} / ↑ {device.bandwidth?.upload || "-"}
                       </td>
                       <td>
-                        <Link
+                        <button
                           className="btn btn-sm btn-light me-1"
-                          to={`/admin/dashboard/devices/view/${device.id}`}
+                          href={`/admin/dashboard/devices/view/${device.id}`}
                         >
                           <Eye size={14} />
-                        </Link>
-                        <Link
+                        </button>
+                        <button
                           className="btn btn-sm btn-light me-1"
-                          to={`/admin/dashboard/devices/edit/${device.id}`}
+                          href={`/admin/dashboard/devices/edit/${device.id}`}
                         >
                           <Edit size={14} />
-                        </Link>
+                        </button>
                         <button
                           className="btn btn-sm btn-light me-1"
                           onClick={() => refreshDeviceStats(device)}
