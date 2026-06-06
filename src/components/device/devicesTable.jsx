@@ -8,6 +8,7 @@ import {
   Eye,
   Edit,
   Trash2,
+  Network,
 } from "lucide-react";
 import Swal from "sweetalert2";
 
@@ -42,14 +43,65 @@ export default function DevicesTable() {
       // Handle both paginated and non-paginated responses
       const devicesList = data.data || data;
       setDevices(devicesList);
-      
+
       // Fetch stats for each device
       devicesList.forEach((device) => refreshDeviceStats(device));
-      
     } catch (err) {
       setErrors({ general: err.message });
     } finally {
       setLoading(false);
+    }
+  };
+
+  // ping device
+  const ping = async (device) => {
+    const token = localStorage.getItem("token");
+    const apiBase = import.meta.env.VITE_API_URL;
+
+    Swal.fire({
+      title: "Pinging Device",
+      text: `Checking ${device.name}...`,
+      allowOutsideClick: false,
+      didOpen: () => {
+        Swal.showLoading();
+      },
+    });
+
+    try {
+      const response = await fetch(
+        `${apiBase}/api/ping?device_id=${device.id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            Accept: "application/json",
+          },
+        },
+      );
+
+      const data = await response.json();
+
+      if (response.ok && data.success) {
+        Swal.fire({
+          icon: "success",
+          title: "✅ Device Online",
+          text: `${device.name} responded in ${data.response_time || "N/A"}`,
+          confirmButtonText: "OK",
+        });
+      } else {
+        Swal.fire({
+          icon: "error",
+          title: "❌ Device Offline",
+          text: data.message || `${device.name} is not responding`,
+          confirmButtonText: "OK",
+        });
+      }
+    } catch (err) {
+      Swal.fire({
+        icon: "error",
+        title: "❌ Error",
+        text: err.message,
+        confirmButtonText: "OK",
+      });
     }
   };
 
@@ -81,8 +133,8 @@ export default function DevicesTable() {
                 bandwidth: data.bandwidth || { upload: "-", download: "-" },
                 uptime: data.uptime ?? "-",
               }
-            : d
-        )
+            : d,
+        ),
       );
     } catch (err) {
       // Mark as offline if stats fetch fails
@@ -90,8 +142,8 @@ export default function DevicesTable() {
         prev.map((d) =>
           d.id === device.id
             ? { ...d, status: "offline", cpu: "-", memory: "-", clients: "-" }
-            : d
-        )
+            : d,
+        ),
       );
     }
   };
@@ -112,16 +164,23 @@ export default function DevicesTable() {
     });
 
     if (result.isConfirmed) {
-      Swal.fire({ title: "Deleting...", allowOutsideClick: false, didOpen: () => Swal.showLoading() });
-      
+      Swal.fire({
+        title: "Deleting...",
+        allowOutsideClick: false,
+        didOpen: () => Swal.showLoading(),
+      });
+
       try {
-        const response = await fetch(`${apiBase}/api/device/delete/${deviceId}`, {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
+        const response = await fetch(
+          `${apiBase}/api/device/delete/${deviceId}`,
+          {
+            method: "DELETE",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
           },
-        });
+        );
 
         if (!response.ok) {
           const data = await response.json();
@@ -138,9 +197,12 @@ export default function DevicesTable() {
 
   const getStatusColor = (status) => {
     switch (status) {
-      case "online": return "bg-success text-white";
-      case "offline": return "bg-danger text-white";
-      default: return "bg-secondary text-white";
+      case "online":
+        return "bg-success text-white";
+      case "offline":
+        return "bg-danger text-white";
+      default:
+        return "bg-secondary text-white";
     }
   };
 
@@ -150,7 +212,8 @@ export default function DevicesTable() {
       device.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       device.ip?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       device.location?.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesStatus = statusFilter === "all" || device.status === statusFilter;
+    const matchesStatus =
+      statusFilter === "all" || device.status === statusFilter;
     return matchesSearch && matchesStatus;
   });
 
@@ -179,7 +242,10 @@ export default function DevicesTable() {
           </select>
         </div>
         <div className="col-md-2">
-          <button className="btn btn-outline-primary w-100" onClick={refreshAllDevices}>
+          <button
+            className="btn btn-outline-primary w-100"
+            onClick={refreshAllDevices}
+          >
             <RefreshCw size={16} className="me-1" /> Refresh All
           </button>
         </div>
@@ -231,7 +297,8 @@ export default function DevicesTable() {
                             style={{
                               width: 40,
                               height: 40,
-                              background: "linear-gradient(135deg,#3b82f6,#06b6d4)",
+                              background:
+                                "linear-gradient(135deg,#3b82f6,#06b6d4)",
                             }}
                           >
                             <Wifi size={20} />
@@ -245,18 +312,23 @@ export default function DevicesTable() {
                         </div>
                       </td>
                       <td>
-                        <span className={`badge ${getStatusColor(device.status)} small`}>
+                        <span
+                          className={`badge ${getStatusColor(device.status)} small`}
+                        >
                           {device.status?.toUpperCase() || "OFFLINE"}
                         </span>
                         {device.uptime && device.uptime !== "-" && (
-                          <div className="text-muted small mt-1">Uptime: {device.uptime}</div>
+                          <div className="text-muted small mt-1">
+                            Uptime: {device.uptime}
+                          </div>
                         )}
                       </td>
                       <td className="fw-bold">{device.cpu || "-"}%</td>
                       <td className="fw-bold">{device.memory || "-"}%</td>
                       <td className="fw-bold">{device.clients || "0"}</td>
                       <td className="fw-bold">
-                        ↓ {device.bandwidth?.download || "-"} / ↑ {device.bandwidth?.upload || "-"}
+                        ↓ {device.bandwidth?.download || "-"} / ↑{" "}
+                        {device.bandwidth?.upload || "-"}
                       </td>
                       <td>
                         <button
@@ -276,6 +348,13 @@ export default function DevicesTable() {
                           onClick={() => refreshDeviceStats(device)}
                         >
                           <RefreshCw size={14} />
+                        </button>
+                        <button
+                          title="Ping this device"
+                          className="btn btn-sm btn-light me-1"
+                          onClick={() => ping(device)}
+                        >
+                          <Network size={14} />
                         </button>
                         <button
                           className="btn btn-sm btn-light"
