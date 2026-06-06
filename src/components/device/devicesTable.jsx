@@ -31,6 +31,8 @@ export default function DevicesTable() {
     setErrors({});
     try {
       const res = await fetch(`${apiBase}/api/all-devices?page=${page}`, {
+        method: "GET",
+        include: "credentials",
         headers: {
           Accept: "application/json",
           "Content-Type": "application/json",
