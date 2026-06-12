@@ -26,7 +26,7 @@ export default function DevicesTable() {
     setLoading(true);
     setErrors({});
     try {
-      const res = await fetch(`${apiBase}/api/all-devices`, {
+      const res = await fetch(`/api/all-devices`, {
         headers: {
           Accept: "application/json",
           Authorization: `Bearer ${token}`,
@@ -55,9 +55,6 @@ export default function DevicesTable() {
 
   // ping device
   const ping = async (device) => {
-    const token = localStorage.getItem("token");
-    const apiBase = import.meta.env.VITE_API_URL;
-
     Swal.fire({
       title: "Pinging Device",
       text: `Checking ${device.name}...`,
@@ -69,7 +66,7 @@ export default function DevicesTable() {
 
     try {
       const response = await fetch(
-        `${apiBase}/api/ping?device_id=${device.id}`,
+        `/api/ping?device_id=${device.id}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -112,7 +109,7 @@ export default function DevicesTable() {
   // Refresh single device stats
   const refreshDeviceStats = async (device) => {
     try {
-      const res = await fetch(`${apiBase}/api/device-stats/${device.id}`, {
+      const res = await fetch(`/api/device-stats/${device.id}`, {
         headers: {
           Accept: "application/json",
           Authorization: `Bearer ${token}`,
@@ -174,7 +171,7 @@ export default function DevicesTable() {
 
       try {
         const response = await fetch(
-          `${apiBase}/api/device/delete/${deviceId}`,
+          `/api/device/delete/${deviceId}`,
           {
             method: "DELETE",
             headers: {
