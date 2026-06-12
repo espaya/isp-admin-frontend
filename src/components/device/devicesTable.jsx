@@ -27,6 +27,8 @@ export default function DevicesTable() {
     setErrors({});
     try {
       const res = await fetch(`${apiBase}/api/all-devices`, {
+        method: "GET",
+        credentials: "include",
         headers: {
           Accept: "application/json",
           Authorization: `Bearer ${token}`,
@@ -71,6 +73,8 @@ export default function DevicesTable() {
       const response = await fetch(
         `${apiBase}/api/ping?device_id=${device.id}`,
         {
+          method: "GET",
+          credentials: "include",
           headers: {
             Authorization: `Bearer ${token}`,
             Accept: "application/json",
@@ -113,6 +117,8 @@ export default function DevicesTable() {
   const refreshDeviceStats = async (device) => {
     try {
       const res = await fetch(`${apiBase}/api/device-stats/${device.id}`, {
+        method: "GET",
+        credentials: "include",
         headers: {
           Accept: "application/json",
           Authorization: `Bearer ${token}`,
@@ -126,7 +132,7 @@ export default function DevicesTable() {
           d.id === device.id
             ? {
                 ...d,
-                status: data.status || "offline",
+                status: data?.status,
                 cpu: data.cpu ?? "-",
                 memory: data.memory ?? "-",
                 clients: data.clients ?? "-",
