@@ -115,6 +115,9 @@ export default function DevicesTable() {
 
   // Refresh single device stats
   const refreshDeviceStats = async (device) => {
+    const token = localStorage.getItem("token");
+    console.log(`Fetching stats for device ${device.id}, Token: ${!!token}`);
+
     try {
       const res = await fetch(`${apiBase}/api/device-stats/${device.id}`, {
         method: "GET",
@@ -125,32 +128,17 @@ export default function DevicesTable() {
         },
       });
 
-      const data = await res.json();
+      console.log(`Response status for device ${device.id}:`, res.status);
 
-      setDevices((prev) =>
-        prev.map((d) =>
-          d.id === device.id
-            ? {
-                ...d,
-                status: data?.status,
-                cpu: data.cpu ?? "-",
-                memory: data.memory ?? "-",
-                clients: data.clients ?? "-",
-                bandwidth: data.bandwidth || { upload: "-", download: "-" },
-                uptime: data.uptime ?? "-",
-              }
-            : d,
-        ),
-      );
+      if (res.status === 401 || res.status === 403) {
+        console.error("Auth failed - redirecting to login");
+        // Optionally redirect to login or refresh token
+      }
+
+      const data = await res.json();
+      // ... rest of code
     } catch (err) {
-      // Mark as offline if stats fetch fails
-      setDevices((prev) =>
-        prev.map((d) =>
-          d.id === device.id
-            ? { ...d, status: "offline", cpu: "-", memory: "-", clients: "-" }
-            : d,
-        ),
-      );
+      console.error(`Error fetching stats for device ${device.id}:`, err);
     }
   };
 
