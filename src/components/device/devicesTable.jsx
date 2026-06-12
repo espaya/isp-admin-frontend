@@ -26,7 +26,7 @@ export default function DevicesTable() {
     setLoading(true);
     setErrors({});
     try {
-      const res = await fetch(`${apiBase}/api/all-devices`, {
+      const res = await fetch(`/api/all-devices`, {
         method: "GET",
         credentials: "include",
         headers: {
@@ -71,7 +71,7 @@ export default function DevicesTable() {
 
     try {
       const response = await fetch(
-        `${apiBase}/api/ping?device_id=${device.id}`,
+        `/api/ping?device_id=${device.id}`,
         {
           method: "GET",
           credentials: "include",
@@ -119,7 +119,7 @@ export default function DevicesTable() {
     console.log(`Fetching stats for device ${device.id}, Token: ${!!token}`);
 
     try {
-      const res = await fetch(`${apiBase}/api/device-stats/${device.id}`, {
+      const res = await fetch(`/api/device-stats/${device.id}`, {
         method: "GET",
         credentials: "include",
         headers: {
@@ -166,7 +166,7 @@ export default function DevicesTable() {
 
       try {
         const response = await fetch(
-          `${apiBase}/api/device/delete/${deviceId}`,
+          `/api/device/delete/${deviceId}`,
           {
             method: "DELETE",
             headers: {
