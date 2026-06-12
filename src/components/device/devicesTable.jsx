@@ -26,9 +26,7 @@ export default function DevicesTable() {
     setLoading(true);
     setErrors({});
     try {
-      const res = await fetch(`/api/all-devices`, {
-        method: "GET",
-        credentials: "include",
+      const res = await fetch(`${apiBase}/api/all-devices`, {
         headers: {
           Accept: "application/json",
           Authorization: `Bearer ${token}`,
@@ -71,10 +69,8 @@ export default function DevicesTable() {
 
     try {
       const response = await fetch(
-        `/api/ping?device_id=${device.id}`,
+        `${apiBase}/api/ping?device_id=${device.id}`,
         {
-          method: "GET",
-          credentials: "include",
           headers: {
             Authorization: `Bearer ${token}`,
             Accept: "application/json",
@@ -115,30 +111,42 @@ export default function DevicesTable() {
 
   // Refresh single device stats
   const refreshDeviceStats = async (device) => {
-    const token = localStorage.getItem("token");
-    console.log(`Fetching stats for device ${device.id}, Token: ${!!token}`);
-
     try {
-      const res = await fetch(`/api/device-stats/${device.id}`, {
-        method: "GET",
-        credentials: "include",
+      const res = await fetch(`${apiBase}/api/device-stats/${device.id}`, {
         headers: {
           Accept: "application/json",
           Authorization: `Bearer ${token}`,
         },
       });
 
-      console.log(`Response status for device ${device.id}:`, res.status);
-
-      if (res.status === 401 || res.status === 403) {
-        console.error("Auth failed - redirecting to login");
-        // Optionally redirect to login or refresh token
-      }
-
       const data = await res.json();
-      // ... rest of code
+
+      console.log(data)
+
+      setDevices((prev) =>
+        prev.map((d) =>
+          d.id === device.id
+            ? {
+                ...d,
+                status: data.status || "offline",
+                cpu: data.cpu ?? "-",
+                memory: data.memory ?? "-",
+                clients: data.clients ?? "-",
+                bandwidth: data.bandwidth || { upload: "-", download: "-" },
+                uptime: data.uptime ?? "-",
+              }
+            : d,
+        ),
+      );
     } catch (err) {
-      console.error(`Error fetching stats for device ${device.id}:`, err);
+      // Mark as offline if stats fetch fails
+      setDevices((prev) =>
+        prev.map((d) =>
+          d.id === device.id
+            ? { ...d, status: "offline", cpu: "-", memory: "-", clients: "-" }
+            : d,
+        ),
+      );
     }
   };
 
@@ -166,7 +174,7 @@ export default function DevicesTable() {
 
       try {
         const response = await fetch(
-          `/api/device/delete/${deviceId}`,
+          `${apiBase}/api/device/delete/${deviceId}`,
           {
             method: "DELETE",
             headers: {
