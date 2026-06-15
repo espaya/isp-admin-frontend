@@ -33,7 +33,8 @@ const fetchSinglePackage = async (
       speed: data?.speed || "",
       price: data?.price || "",
       validity: data?.validity || "",
-      dataLimit: data?.dataLimit || "",
+      // ✅ Fix: Convert "Unlimited Data" to empty string for number input
+      dataLimit: data.dataLimit === "Unlimited Data" ? "" : data.dataLimit || "",
       isActive: Boolean(data?.isActive),
       description: data?.description || "",
       devices: data?.devices || "",
