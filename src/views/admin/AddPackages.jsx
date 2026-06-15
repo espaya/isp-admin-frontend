@@ -21,6 +21,7 @@ export default function AddPackages() {
     description: "",
     devices: "",
     type: "",
+    mikrotik_profile: "",
   });
 
   const token = localStorage.getItem("token");
@@ -80,6 +81,7 @@ export default function AddPackages() {
           description: "",
           devices: "",
           type: "",
+          mikrotik_profile: "",
         });
       }
     } catch (err) {
@@ -133,7 +135,7 @@ export default function AddPackages() {
             <div className="card-body">
               <div className="row g-4">
                 {/* Package Name */}
-                <div className="col-md-6">
+                <div className="col-md-4">
                   <label className="form-label fw-semibold">
                     Package Name *
                   </label>
@@ -151,7 +153,7 @@ export default function AddPackages() {
                 </div>
 
                 {/* Speed */}
-                <div className="col-md-6">
+                <div className="col-md-4">
                   <label className="form-label fw-semibold">
                     Speed (Mbps) *
                   </label>
@@ -166,6 +168,27 @@ export default function AddPackages() {
                   />
                   {errors?.speed && (
                     <small className="text-danger">{errors.speed[0]}</small>
+                  )}
+                </div>
+
+                {/* Mikrotik Profile */}
+                <div className="col-md-4">
+                  <label className="form-label fw-semibold">
+                    Mikrotik Profile *
+                  </label>
+                  <input
+                    min={1}
+                    type="text"
+                    className="form-control"
+                    placeholder=" e.g daily_10mb"
+                    name="speed"
+                    value={formData.mikrotik_profile ?? ""}
+                    onChange={handleChange}
+                  />
+                  {errors?.mikrotik_profile && (
+                    <small className="text-danger">
+                      {errors.mikrotik_profile[0]}
+                    </small>
                   )}
                 </div>
 

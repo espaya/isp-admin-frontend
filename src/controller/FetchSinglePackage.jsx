@@ -38,6 +38,7 @@ const fetchSinglePackage = async (
       description: data.description || "",
       devices: data.devices?.toString() || "",
       type: data.type || "",
+      mikrotik_profile: data.mikrotik_profile || ""
     });
   } catch (err) {
     setErrors({ general: err.message });
