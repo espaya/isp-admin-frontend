@@ -6,19 +6,18 @@ const fetchSinglePackage = async (
   apiBase,
   id,
   setFormData,
-  formData
+  formData,
 ) => {
   setLoading(true);
   try {
-
-    const token = localStorage.getItem("token")
+    const token = localStorage.getItem("token");
 
     const response = await fetch(`${apiBase}/api/single-package/${id}`, {
       method: "GET",
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`
+        Authorization: `Bearer ${token}`,
       },
     });
 
@@ -38,8 +37,8 @@ const fetchSinglePackage = async (
       isActive: Boolean(data.isActive),
       description: data.description || "",
       devices: data.devices?.toString() || "",
+      type: data.type || "",
     });
-
   } catch (err) {
     setErrors({ general: err.message });
   } finally {
