@@ -29,16 +29,16 @@ const fetchSinglePackage = async (
     }
 
     setFormData({
-      name: data.name || "",
-      speed: data.speed?.toString() || "",
-      price: data.price?.toString() || "",
-      validity: data.validity?.toString() || "",
-      dataLimit: data.dataLimit?.toString() || "",
-      isActive: Boolean(data.isActive),
-      description: data.description || "",
-      devices: data.devices?.toString() || "",
-      type: data.type || "",
-      mikrotik_profile: data.mikrotik_profile || ""
+      name: data?.name || "",
+      speed: data?.speed || "",
+      price: data?.price || "",
+      validity: data?.validity || "",
+      dataLimit: data?.dataLimit || "",
+      isActive: Boolean(data?.isActive),
+      description: data?.description || "",
+      devices: data?.devices || "",
+      type: data?.type || "",
+      mikrotik_profile: data?.mikrotik_profile || ""
     });
   } catch (err) {
     setErrors({ general: err.message });
