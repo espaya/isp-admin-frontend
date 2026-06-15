@@ -181,7 +181,7 @@ export default function AddPackages() {
                     type="text"
                     className="form-control"
                     placeholder=" e.g daily_10mb"
-                    name="speed"
+                    name="mikrotik_profile"
                     value={formData.mikrotik_profile ?? ""}
                     onChange={handleChange}
                   />
